@@ -12,17 +12,46 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var lbMessageFromRegister: UILabel!
     @IBOutlet weak var txtPassword: UITextField!
     @IBOutlet weak var txtUsername: UITextField!
-    var domainName:String!
+    
+    var accountAPI:AccountAPIService
+    init(accountAPI: AccountAPIService) {
+        self.accountAPI = accountAPI
+        super.init(nibName: "LoginViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit{
+        print("login deinit")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.hidesBackButton = true
-        domainName = "http://localhost:3000/"
         lbMessageFromRegister.lineBreakMode = NSLineBreakMode.byWordWrapping
         lbMessageFromRegister.numberOfLines = 0
         self.navigationItem.setHidesBackButton(true, animated: true)
         // Do any additional setup after loading the view.
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let register = RegisterViewController(accountAPI: accountAPI)
+        register.handlerLogin = { [weak self] message in
+            guard let self = self else{
+                return
+            }
+            DispatchQueue.main.async {
+                let aleart = UIAlertController(title: "Notification", message: message, preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default)
+                aleart.addAction(ok)
+                self.present(aleart,animated: true)
+            }
+        }
     }
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         lbMessageFromRegister.text=""
         txtPassword.text = ""
         txtUsername.text = ""
@@ -30,47 +59,27 @@ class LoginViewController: UIViewController {
     @IBAction func btnLogin(_ sender: Any) {
         let username = txtUsername.text!
         let password = txtPassword.text!
-        let url = URL(string: domainName + "login")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let paramString = "username=" + username + "&password=" + password
-        let postDataString = paramString.data(using: .utf8)
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        accountAPI.login(username: username, password: password,completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Result.self, from: data)
             DispatchQueue.main.async {
-                if dataInfo?.result == 1{
-                    UserDefaults.standard.set(dataInfo?.data, forKey: "token")
-                    self.navigationController?.pushViewController(DashboardViewController(), animated: true)
+                if value.result == 1{
+                    UserDefaults.standard.set(value.data, forKey: "token")
+                    self.navigationController?.pushViewController(DashboardViewController(accountAPI: self.accountAPI), animated: true)
                 }else{
-                        let aleart = UIAlertController(title: "Notification", message: dataInfo?.message, preferredStyle: .alert)
-                        let ok = UIAlertAction(title: "OK", style: .default)
-                        aleart.addAction(ok)
-                        self.present(aleart,animated: true)
+                    let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default)
+                    aleart.addAction(ok)
+                    self.present(aleart,animated: true)
                 }
             }
-        }.resume()
+        })
+            
     }
     @IBAction func btnRegister(_ sender: Any) {
-        let registerVC = RegisterViewController()
-        registerVC.delegate = self
-        self.navigationController?.pushViewController(registerVC, animated: true)
+        self.navigationController?.pushViewController(RegisterViewController(accountAPI: accountAPI), animated: true)
     }
     
     
-}
-extension LoginViewController : Register_Login_delegate{
-    func message(a: String) {
-        let aleart = UIAlertController(title: "Notification", message: a, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default)
-        aleart.addAction(ok)
-        present(aleart,animated: true)
-    }
 }

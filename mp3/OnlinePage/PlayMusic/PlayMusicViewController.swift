@@ -8,52 +8,77 @@
 import UIKit
 import AVFoundation
 import AVFAudio
-
+import SDWebImage
 class PlayMusicViewController: UIViewController {
-    var timer : Timer!
+    var download = false;
+    var timer : Timer? {
+        didSet{
+            oldValue?.invalidate()
+        }
+    }
     var i : Int = 0
     var indexPlay : Int = 0
     var n : Int = 1
     var arrayRecent :Array<Int> = []
     var music : MusicInfor!
+    var musicAPI:MusicApiService?
+    init( musicAPI: MusicApiService) {
+        self.musicAPI = musicAPI
+        super.init(nibName: "PlayMusicViewController", bundle: nil)
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     var arrayMusic:Array<MusicInfor> = []
-    var arrayMore:Array<String> = ["Information"]
     var player : AVPlayer?
-    var domainName:String!
     var statusRepeat:Bool = false
+    var timerSlider:Timer? {
+        didSet{
+            oldValue?.invalidate()
+        }
+    }
+    @IBOutlet weak var buttonDownload: UIButton!
     @IBOutlet weak var lbInfor: UILabel!
     @IBOutlet var slider: UISlider!
     @IBOutlet var playedTime: UILabel!
     @IBOutlet weak var btnPlay: UIButton!
     @IBOutlet weak var imgview: UIImageView!
     @IBOutlet weak var currentTime: UILabel!
-    
     @IBOutlet weak var btnRepeatOne: UIButton!
-    
+    deinit{
+        print("play music deinit")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        domainName = "http://localhost:3000/"
         getMusic()
         getArrayMusic()
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime), name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
         slider.isContinuous = true
+
+        imgview.layer.borderWidth = 1
+        imgview.layer.masksToBounds = false
+        imgview.layer.borderColor = UIColor.black.cgColor
+        imgview.layer.cornerRadius = imgview.frame.height/2
+        imgview.clipsToBounds = true
         
     }
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        music = nil
+        musicAPI = nil
+        timerSlider = nil
+        timer = nil
         btnPlay.setImage(UIImage(named: "play"), for: .normal)
         player?.pause()
+        NotificationCenter.default.removeObserver(self)
     }
     @IBAction func playButtonTapped(_ sender: Any) {
         if player!.rate == 0 {
             player?.play()
-            timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { tm in
-                self.i += 5
-                self.imgview.transform = CGAffineTransform(rotationAngle: CGFloat(Double(self.i) * Double.pi/180))
-            })
+            timerImage()
             btnPlay.setImage(UIImage(named: "pause"), for: .normal)
         } else {
             player?.pause()
-            timer.invalidate()
             timer = nil
             btnPlay.setImage(UIImage(named: "play"), for: .normal)
         }
@@ -68,10 +93,7 @@ class PlayMusicViewController: UIViewController {
         
         if player!.rate == 0
         {
-            timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { tm in
-                self.i += 5
-                self.imgview.transform = CGAffineTransform(rotationAngle: CGFloat(Double(self.i) * Double.pi/180))
-            })
+            timerImage()
             btnPlay.setImage(UIImage(named: "pause"), for: .normal)
             player?.play()
         }
@@ -84,13 +106,7 @@ class PlayMusicViewController: UIViewController {
                 indexPlay = 0
             }
             let index = arrayRecent[indexPlay]
-            let ex = (domainName + "upload/music/" + arrayMusic[index].file!)
-            let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-            lbInfor.text = arrayMusic[index].nameAlbum + " - " + arrayMusic[index].nameSinger!
-            let url1 = URL(string: newString)
-            Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
-            player = AVPlayer(url: url1!)
-            getDuarationAndCurrent(player: player!)
+            getMusicInfor(music: arrayMusic[index])
             player?.play()
         }else{
             indexPlay += 1
@@ -98,19 +114,11 @@ class PlayMusicViewController: UIViewController {
                 indexPlay = 0
             }
             let index = arrayRecent[indexPlay]
-            let ex = (domainName + "upload/music/" + arrayMusic[index].file!)
-            let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-            lbInfor.text = arrayMusic[index].nameAlbum + " - " + arrayMusic[index].nameSinger!
-            let url1 = URL(string: newString)
-            Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
-            player = AVPlayer(url: url1!)
-            getDuarationAndCurrent(player: player!)
+            getMusicInfor(music: arrayMusic[index])
             player?.pause()
         }
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime), name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
     }
-    
-    
     @IBAction func btnBackMusic(_ sender: Any) {
         currentTime.text = "00:00"
         if(player?.rate == 0 ){
@@ -119,13 +127,7 @@ class PlayMusicViewController: UIViewController {
                 indexPlay = arrayRecent.count - 1
             }
             let index = arrayRecent[indexPlay]
-            let ex = (domainName + "upload/music/" + arrayMusic[index].file!)
-            let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-            lbInfor.text = arrayMusic[index].nameAlbum + " - " + arrayMusic[index].nameSinger!
-            let url = URL(string: newString)
-            Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
-            player = AVPlayer(url: url!)
-            getDuarationAndCurrent(player: player!)
+            getMusicInfor(music: arrayMusic[index])
             player?.play()
         }else{
             indexPlay -= 1
@@ -133,139 +135,174 @@ class PlayMusicViewController: UIViewController {
                 indexPlay = arrayRecent.count - 1
             }
             let index = arrayRecent[indexPlay]
-            let ex = (domainName + "upload/music/" + arrayMusic[index].file!)
-            let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-            lbInfor.text = arrayMusic[index].nameAlbum + " - " + arrayMusic[index].nameSinger!
-            let url = URL(string: newString)
-            Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
-            player = AVPlayer(url: url!)
-            getDuarationAndCurrent(player: player!)
+            getMusicInfor(music: arrayMusic[index])
             player?.pause()
         }
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime), name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
     }
+    
     @objc func itemDidPlayToEndTime(notification: Notification) {
-        print("itemDidPlayToEndTime - run")
         if (notification.object as? AVPlayerItem) == self.player?.currentItem {
             if !statusRepeat {
                 indexPlay += 1
                 let index = arrayRecent[indexPlay]
-                let ex = (domainName + "upload/music/" + arrayMusic[index].file!)
-                let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-                lbInfor.text = arrayMusic[index].nameAlbum + " - " + arrayMusic[index].nameSinger!
-                let url1 = URL(string: newString)
-                Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
-                player = AVPlayer(url: url1!)
-                getDuarationAndCurrent(player: player!)
+                getMusicInfor(music: arrayMusic[index])
                 player?.play()
             }else{
                 player?.seek(to: .zero)
                 player?.play()
             }
         }
+    }
+ 
+    @objc func updateSlider() {
+        if player != nil {
+            let currentTimeBySecond = CMTimeGetSeconds((player!.currentTime()))
+            slider.value = Float(currentTimeBySecond)
         }
-        @objc func updateSlider() {
-            if player != nil {
-                let currentTimeBySecond = CMTimeGetSeconds((player!.currentTime()))
-                slider.value = Float(currentTimeBySecond)
-            }
-        }
-        func getArrayMusic(){
-            let url = URL(string: domainName + "music/categoryId")
-            var request = URLRequest(url: url!)
-            request.httpMethod = "POST"
-            let paramString = "categoryId=" + music.idCategory
-            let postDataString = paramString.data(using: .utf8)
-            request.httpBody = postDataString
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data,
-                      let _ = response as?  HTTPURLResponse,
-                      error == nil else{
-                    print("Error from server", error ?? "Error is underfind")
-                    return
-                }
-                let jsonDecoder = JSONDecoder()
-                let dataInfo = try? jsonDecoder.decode(Music_Result.self, from: data)
-                if(dataInfo?.result == 1){
-                    self.arrayMusic = dataInfo!.data
-                    let indexOfMusic = self.arrayMusic.firstIndex(where: { $0._id == self.music._id })
-                    self.arrayRecent.append(indexOfMusic!)
-                    for _ in 1...20 {
-                        let index = Int.random(in: 0..<self.arrayMusic.count)
-                        self.arrayRecent.append(index)
-                    }
-                }
-            }.resume()
-        }
-        
-        func getMusic(){
-            let ex = (domainName + "upload/music/" + music.file! )
-            let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-            lbInfor.text = music.nameAlbum + " - " + music.nameSinger!
-            arrayMusic.append(music)
-            let url = URL(string: newString)
-            Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
-            player = AVPlayer(url: url!)
-            
-            getDuarationAndCurrent(player: player!)
-            player?.play()
-            timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { tm in
-                self.i += 5
-                self.imgview.transform = CGAffineTransform(rotationAngle: CGFloat(Double(self.i) * Double.pi/180))
-            })
-            btnPlay.setImage(UIImage(named: "pause"), for: .normal)
-            player?.play()
-            
-        }
-        
-        func getDuarationAndCurrent(player : AVPlayer){
-            guard let duration = player.currentItem?.asset.duration else {
+    }
+    func getArrayMusic(){
+        musicAPI?.getMusicByCategoryId(categoryId: music.idCategory, completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            //duration time
-            let durationBySecond = CMTimeGetSeconds(duration)
-            let min = Int(durationBySecond) / 60
-            let second = Int(durationBySecond) % 60
-            if min <= 9{
-                if second <= 9{
-                    self.playedTime.text = "0\(min):0\(second)"
-                }else{
-                    self.playedTime.text = "0\(min):\(second)"
-                }
-            }else if (second <= 9 && min > 9){
-                self.playedTime.text = "\(min):0\(second)"
+            self.arrayMusic = value.data
+            let indexOfMusic = self.arrayMusic.firstIndex(where: { $0._id == self.music._id })
+            self.arrayRecent.append(indexOfMusic!)
+            for _ in 1...20 {
+                let index = Int.random(in: 0..<self.arrayMusic.count)
+                self.arrayRecent.append(index)
             }
-            self.slider.maximumValue = Float(durationBySecond)
-            
-            //current Time
-            player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: DispatchQueue.main) { (CMTime) -> Void in
-                if self.player!.currentItem?.status == .readyToPlay {
-                    let currentTime = CMTimeGetSeconds(self.player!.currentTime());
-                    let min = Int(currentTime) / 60
-                    let second = Int(currentTime) % 60
-                    if min <= 9{
-                        if second <= 9{
-                            self.currentTime.text = "0\(min):0\(second)"
-                        }else{
-                            self.currentTime.text = "0\(min):\(second)"
-                        }
-                    }else if (second <= 9 && min > 9){
-                        self.currentTime.text = "\(min):0\(second)"
-                    }
-                    
-                }
-            }
-        }
+        })
+    }
+    
+    func getMusic(){
+        getMusicInfor(music: music)
+        player?.play()
+        timerImage()
+        btnPlay.setImage(UIImage(named: "pause"), for: .normal)
+        player?.play()
         
-        @IBAction func btnRepeatOne(_ sender: UIButton) {
-            n += 1
-            if(n % 2 == 0){
-                statusRepeat = true
-                btnRepeatOne.setImage(UIImage(named: "repeat-on"), for: .normal)
+    }
+    func getMusicInfor(music : MusicInfor){
+        getImage(music: music)
+        let ex = (music.file!)
+        let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
+        lbInfor.text = music.nameAlbum + " - " + music.nameSinger!
+        let url1 = URL(string: newString)
+        timerSlider = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
+        player = AVPlayer(url: url1!)
+        getDuarationAndCurrent(player: player!)
+    }
+    func getDuarationAndCurrent(player : AVPlayer){
+        guard let duration = player.currentItem?.asset.duration else {
+            return
+        }
+        //duration time
+        let durationBySecond = CMTimeGetSeconds(duration)
+        let min = Int(durationBySecond) / 60
+        let second = Int(durationBySecond) % 60
+        if min <= 9{
+            if second <= 9{
+                self.playedTime.text = "0\(min):0\(second)"
             }else{
-                statusRepeat = false
-                btnRepeatOne.setImage(UIImage(named: "repeat-off"), for: .normal)
+                self.playedTime.text = "0\(min):\(second)"
+            }
+        }else if (second <= 9 && min > 9){
+            self.playedTime.text = "\(min):0\(second)"
+        }
+        self.slider.maximumValue = Float(durationBySecond)
+        
+        //current Time
+        player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: DispatchQueue.main) { [weak self] (CMTime) -> Void in
+            guard let self = self, let player = self.player else{
+                return
+            }
+            if player.currentItem?.status == .readyToPlay {
+                let currentTime = CMTimeGetSeconds(player.currentTime());
+                let min = Int(currentTime) / 60
+                let second = Int(currentTime) % 60
+                if min <= 9{
+                    if second <= 9{
+                        self.currentTime.text = "0\(min):0\(second)"
+                    }else{
+                        self.currentTime.text = "0\(min):\(second)"
+                    }
+                }else if (second <= 9 && min > 9){
+                    self.currentTime.text = "\(min):0\(second)"
+                }
+                
             }
         }
     }
+    
+    @IBAction func btnRepeatOne(_ sender: UIButton) {
+        n += 1
+        if(n % 2 == 0){
+            statusRepeat = true
+            btnRepeatOne.setImage(UIImage(named: "repeat-on"), for: .normal)
+        }else{
+            statusRepeat = false
+            btnRepeatOne.setImage(UIImage(named: "repeat-off"), for: .normal)
+        }
+    }
+    
+    
+    @IBAction func btnDownLoad(_ sender: Any) {
+        if !download {
+            let action = UIAlertController(title: "Notification", message: "Do you want to download?", preferredStyle: .actionSheet)
+            let download = UIAlertAction(title: "Download File", style: .default) { e in
+                let newString = self.music.file!.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
+                if let audioUrl = URL(string: "http://localhost:3000/upload/music/" + newString){
+                    // then lets create your document folder url
+                    let documentsDirectoryURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                    // lets create your destination file url
+                    
+                    let mp3Path = documentsDirectoryURL.appendingPathComponent("MP3_Project", isDirectory: true)
+                    let destinationUrl = mp3Path.appendingPathComponent(audioUrl.lastPathComponent)
+                    
+                    // to check if it exists before downloading it
+                    if FileManager.default.fileExists(atPath: destinationUrl.path) {
+                        print("The file already exists at path")
+                        
+                        // if the file doesn't exist
+                    } else {
+                        
+                        // you can use NSURLSession.sharedSession to download the data asynchronously
+                        URLSession.shared.downloadTask(with: audioUrl) {[weak self] location, response, error in
+                            guard let location = location, error == nil else { return }
+                            do {
+                                // after downloading your file you need to move it to your destination url
+                                try FileManager.default.moveItem(at: location, to: destinationUrl)
+                                self?.download = true
+                                print("File moved to documents folder")
+                                DispatchQueue.main.async {
+                                    self?.buttonDownload.setImage(UIImage(named: "download-3"), for: .normal)
+                                }
+                            } catch {
+                                print(error)
+                            }
+                        }.resume()
+                    }
+                }
+            }
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+            action.addAction(cancel)
+            action.addAction(download)
+            self.present(action, animated: true)
+
+        }
+    }
+    func timerImage(){
+        timer = Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true, block: { [weak self] tm in
+            self?.i += 1
+            self?.imgview.transform = CGAffineTransform(rotationAngle: CGFloat(Double(self!.i) * Double.pi/180))
+        })
+
+    }
+    func getImage(music:MusicInfor){
+        self.imgview.sd_setImage(with: URL(string: music.image), placeholderImage: UIImage(named: "placeholder.png"))
+    }
+}
+    
     

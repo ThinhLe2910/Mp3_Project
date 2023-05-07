@@ -16,9 +16,9 @@ protocol Update_Res_delegate{
 class HomeUploadViewController: UIViewController {
     @IBOutlet weak var viewdropDown: UIView!
     @IBOutlet weak var lbTitle: UILabel!
-    var domainName  = "http://localhost:3000/"
     var nameFile :String!
     let dropDown = DropDown()
+    var newImageMusic:String!
     var newMusic :String!
     var indexInarrayCate :Int?
     var arrayCate : Array<CategoryInfor> = []
@@ -28,28 +28,43 @@ class HomeUploadViewController: UIViewController {
     var statusUpload:Bool = true
     var statusUpdate:Bool = true
     var delegate:Update_Res_delegate?
+    var musicAPI:MusicApiService
+    
     @IBOutlet weak var btnUpdate: UIButton!
     @IBOutlet weak var lbMP3: UIButton!
     @IBOutlet weak var txtKindOfMusic: UITextField!
     @IBOutlet weak var btnUpload: UIButton!
     @IBOutlet weak var txtNameSinger: UITextField!
+    @IBOutlet weak var imgMusic: UIImageView!
     @IBOutlet weak var txtNameSong: UITextField!
     var file:String=""
     var token:String!
     var music : MusicInfor?
+    
+    var categoryAPI:CategoryApiService
+    
+    init(categoryAPI: CategoryApiService, musicAPI : MusicApiService) {
+        self.musicAPI = musicAPI
+        self.categoryAPI = categoryAPI
+        super.init(nibName: "HomeUploadViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit{
+        print("upload/update deinit")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         token = UserDefaults.standard.string(forKey: "token")!
         btnUpdate.isHidden = statusUpdate
         clickUpload.isHidden = statusUpload
         getCategory()
-        
-        let cateogory = music?.Category
-        lbTitle.text = cateogory?[0].name ??  "Choose kind of music"
-        txtNameSinger.text = music?.nameSinger
-        txtNameSong.text = music?.nameAlbum
-        btnUpload.setTitle(music?.file, for: .normal)
-        newMusic = music?.file
+        getCurrentMusic()
+     
 
         
         dropDown.anchorView = viewdropDown
@@ -58,46 +73,50 @@ class HomeUploadViewController: UIViewController {
         dropDown.direction = .bottom
         
     }
+    func getCurrentMusic(){
+        if (music != nil) {
+            let cateogory = music?.Category
+            lbTitle.text = cateogory?[0].name ??  "Choose kind of music"
+            txtNameSinger.text = music?.nameSinger
+            txtNameSong.text = music?.nameAlbum
+            btnUpload.setTitle(music?.file, for: .normal)
+            newImageMusic = music?.image
+            newMusic = music?.file
+            self.imgMusic.sd_setImage(with: URL(string: newImageMusic), placeholderImage: UIImage(named: "placeholder.png"))
+            self.imgMusic.contentMode = .scaleAspectFit
+        }
+    }
     @IBAction func btnUpload(_ sender: Any) {
         let alert = UIAlertController(title: "Message", message: "Do you want to create new music ?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Create", style: .default,handler: { action in
+        alert.addAction(UIAlertAction(title: "Create", style: .default,handler: { [weak self] action in
+            guard let self = self, let newMusic = self.newMusic else{
+                return
+            }
             if(self.indexInarrayCate == nil){
                 let aleart = UIAlertController(title: "Notification", message: "Please choose kind of music!", preferredStyle: .alert)
                 let ok = UIAlertAction(title: "OK", style: .default)
                 aleart.addAction(ok)
                 self.present(aleart,animated: true)
             }else{
-                let url = URL(string: self.domainName + "music/add")
                 let nameSong = self.txtNameSong.text!
                 let nameSinger = self.txtNameSinger.text!
                 let idCategory = self.arrayCate[self.indexInarrayCate!]._id
-                let newMusic = self.newMusic!
-                var request = URLRequest(url: url!)
-                let paramString = "token=" + self.token! + "&idCategory=" + idCategory + "&nameAlbum=" + nameSong + "&nameSinger=" + nameSinger + "&file=" + newMusic
-                let postDataString = paramString.data(using: .utf8)
-                request.httpMethod = "POST"
-                request.httpBody = postDataString
-                URLSession.shared.dataTask(with: request) { data, response, error in
-                    guard let data = data,
-                          let _ = response as?  HTTPURLResponse,
-                          error == nil else{
-                        print("Error from server", error ?? "Error is underfind")
+                self.musicAPI.addMusic(token: self.token,image : self.newImageMusic,idCategory: idCategory, nameSong: nameSong, nameSinger: nameSinger, newMusic: newMusic, completionHandler: { [weak self] value in
+                    guard let self = self else{
                         return
                     }
-                    let jsonDecoder = JSONDecoder()
-                    let dataInfo = try? jsonDecoder.decode(Result.self, from: data)
                     DispatchQueue.main.async {
-                        if(dataInfo?.result == 1){
-                            self.notiSuccessfully(a:dataInfo?.message ?? "")
+                        if(value.result == 1){
+                            self.notiSuccessfully(a:value.message)
                         }else{
-                            let aleart = UIAlertController(title: "Notification", message: dataInfo?.message, preferredStyle: .alert)
+                            let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
                             let ok = UIAlertAction(title: "OK", style: .default)
                             aleart.addAction(ok)
                             self.present(aleart,animated: true)
                         }
                     }
-                }.resume()
+                })
             }
         }))
         self.present(alert, animated: true)
@@ -112,26 +131,18 @@ class HomeUploadViewController: UIViewController {
         self.present(documentPicker, animated: true, completion: nil)
     }
     func getCategory(){
-        let url = URL(string: domainName + "category/list")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        categoryAPI.getListCategory(completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Category_Result.self, from: data)
-            if dataInfo?.result == 1{
-                self.arrayCate = dataInfo!.data
-                for e in dataInfo!.data{
+            if value.result == 1{
+                self.arrayCate = value.data
+                for e in value.data{
                     self.arr.append(e.name)
                 }
                 self.dropDown.dataSource  = self.arr
             }
-        }.resume()
+        })
     }
     
     @IBAction func clickDropdown(_ sender: Any) {
@@ -146,43 +157,33 @@ class HomeUploadViewController: UIViewController {
     @IBAction func clickUpdate(_ sender: Any) {
         let alert = UIAlertController(title: "Message", message: "Do you want to update music ?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Update", style: .default,handler: { action in
-            let url = URL(string: self.domainName + "music/update")
+        alert.addAction(UIAlertAction(title: "Update", style: .default,handler: { [weak self] action in
+            guard let self = self ,let music = self.music,let newMusic = self.newMusic ,let Category = music.Category else{
+                return
+            }
             if(self.indexInarrayCate == nil){
-                self.indexInarrayCate = self.arr.firstIndex(of: (self.music?.Category![0].name)!)
+                self.indexInarrayCate = self.arr.firstIndex(of: Category[0].name)
             }
             let nameSong = self.txtNameSong.text!
             let nameSinger = self.txtNameSinger.text!
             let idCategory = self.arrayCate[self.indexInarrayCate!]._id
-            let _id = self.music!._id
-            let music = self.newMusic!
-            var request = URLRequest(url: url!)
-            let paramString = "token=" + self.token! + "&idCategory=" + idCategory + "&nameAlbum=" + nameSong + "&nameSinger=" + nameSinger + "&file=" + music + "&_id=" + _id
-            let postDataString = paramString.data(using: .utf8)
-            request.httpMethod = "POST"
-            request.httpBody = postDataString
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data,
-                      let _ = response as?  HTTPURLResponse,
-                      error == nil else{
-                    print("Error from server", error ?? "Error is underfind")
+            let id = music._id
+            self.musicAPI.updateMusic(token: self.token,image:self.newImageMusic,id: id, idCategory: idCategory, nameSong: nameSong, nameSinger: nameSinger, music: newMusic, completionHandler: { [weak self] value in
+                guard let self = self else{
                     return
                 }
-                let jsonDecoder = JSONDecoder()
-                let dataInfo = try? jsonDecoder.decode(Result.self, from: data)
                 DispatchQueue.main.async {
-                    if(dataInfo?.result == 1){
+                    if(value.result == 1){
                         self.navigationController?.popViewController(animated: true)
-                        self.delegate?.message(a: dataInfo?.message ?? "")
+                        self.delegate?.message(a: value.message)
                     }else{
-                        let aleart = UIAlertController(title: "Notification", message: dataInfo?.message, preferredStyle: .alert)
+                        let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
                         let ok = UIAlertAction(title: "OK", style: .default)
                         aleart.addAction(ok)
                         self.present(aleart,animated: true)
                     }
-                    
                 }
-            }.resume()
+            })
         }))
         self.present(alert, animated: true)
     }
@@ -196,27 +197,55 @@ class HomeUploadViewController: UIViewController {
 }
 extension  HomeUploadViewController : UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        if let url = urls.first {
-            AF.upload(multipartFormData: { part in
-                part.append(url, withName: "music")
-            }, to: domainName + "uploadMusic" ).response { response in
-                switch response.result {
-                case .success(let data):
-                    do {
-                        let res = try JSONDecoder().decode(Result.self, from: data!)
-                        self.newMusic = res.data
-                        self.lbMP3.setTitle(res.data, for: .normal)
-                    } catch {
-                        print(error)
-                    }
-                case .failure(let error):
-                    print(error)
-                }
+        musicAPI.uploadMusic(urls: urls, completionHanlder: { [weak self] value in
+            guard let self = self else{
+                return
             }
-        }
+            DispatchQueue.main.async {
+                self.newMusic = value.data
+                self.lbMP3.setTitle(value.data, for: .normal)
+            }
+        })
     }
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         controller.dismiss(animated: true)
     }
     
+}
+extension HomeUploadViewController:UINavigationControllerDelegate,UIImagePickerControllerDelegate{
+    
+    @IBAction func clickImage(_ sender: Any){
+        let action = UIAlertController(title: "Notification", message: "Choose Avatar", preferredStyle: .actionSheet)
+        let choosePhoto = UIAlertAction(title: "Choose Photo In Library", style: .default) {[weak self] e in
+            guard let self = self else{
+                return
+            }
+            let image = UIImagePickerController()
+            image.delegate = self
+            image.sourceType = .photoLibrary
+            self.present(image, animated: true)
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        action.addAction(choosePhoto)
+        action.addAction(cancel)
+        present(action, animated: true,completion: nil)
+    }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let img = info[UIImagePickerController.InfoKey(rawValue: UIImagePickerController.InfoKey.imageURL.rawValue)] as? URL{
+            imgMusic.image = UIImage(contentsOfFile: img.path)
+            imgMusic.contentMode = .scaleAspectFit
+            self.musicAPI.uploadMusicImage(url: img, completionHandler: { [weak self] value in
+                guard let self = self else{
+                    return
+                }
+                DispatchQueue.main.async {
+                    if value.result == 1{
+                        self.newImageMusic = value.data
+                        print(self.newImageMusic)
+                    }
+                }
+            })
+        }
+        self.dismiss(animated: true)
+    }
 }

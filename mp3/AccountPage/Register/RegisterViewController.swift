@@ -6,22 +6,34 @@
 //
 
 import UIKit
-protocol Register_Login_delegate{
-    func message(a:String)
-}
+
 class RegisterViewController: UIViewController {
+    
+    
+    var handlerLogin: ((_ message: String) -> Void)?
     
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtConfirmPassword: UITextField!
     @IBOutlet weak var txtPassword: UITextField!
     @IBOutlet weak var txtEmail: UITextField!
     @IBOutlet weak var txtUserName: UITextField!
-    var delegate:Register_Login_delegate?
-    var domainName:String!
+    var accountAPI:AccountAPIService
+    
+    init(accountAPI: AccountAPIService) {
+        self.accountAPI = accountAPI
+        super.init(nibName: "RegisterViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit{
+        print("register deinit")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        domainName = "http://localhost:3000/"
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func btnRegister(_ sender: Any) {
@@ -29,37 +41,23 @@ class RegisterViewController: UIViewController {
         let password = txtPassword.text!
         let email = txtEmail.text!
         let name = txtName.text!
-        let confirmPassord = txtConfirmPassword.text!
-        let url = URL(string: domainName + "register")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let paramString = "username=" + username + "&name=" + name + "&password=" + password + "&email=" + email + "&confirmPassword=" + confirmPassord
-        let postDataString = paramString.data(using: .utf8)
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        let confirmPassword = txtConfirmPassword.text!
+        accountAPI.register(username: username, password: password, email: email, name: name, confirmPassword: confirmPassword, completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Result.self, from: data)
             DispatchQueue.main.async {
-                if dataInfo?.result == 1{
-                   
+                if value.result == 1{
+                    self.handlerLogin?(value.message)
                     self.navigationController?.popViewController(animated: true)
-                    self.delegate?.message(a: dataInfo?.message ?? "")
                 }else{
-                    let aleart = UIAlertController(title: "Notification", message: dataInfo?.message, preferredStyle: .alert)
+                    let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
                     let ok = UIAlertAction(title: "OK", style: .default)
                     aleart.addAction(ok)
                     self.present(aleart,animated: true)
                 }
             }
-            
-        }.resume()
-        
+        })
     }
     
 }

@@ -6,79 +6,96 @@
 //
 
 import UIKit
+import SDWebImage
 struct DATA {
     var album: [CategoryInfor]
     var music: [MusicInfor]
 }
 
 class HomeViewController: UIViewController {
+   
+    @IBOutlet weak var searchBar : UISearchBar!
+    var currentDataSource : [MusicInfor] = []
+    @IBOutlet weak var searchContainerView: UIView!
+    @IBOutlet weak var tableview: UITableView!
+    let refreshControl = UIRefreshControl()
     var object: DATA?
     var arrayCategory : Array<CategoryInfor> = []
     var arrMusic: Array<MusicInfor> = []
-    var domainName:String!
-    @IBOutlet weak var tableview: UITableView!
+    
+    var categoryAPI:CategoryApiService
+    let musicAPI:MusicApiService
+    init(musicApi: MusicApiService,categoryAPI: CategoryApiService) {
+        self.categoryAPI = categoryAPI
+        self.musicAPI = musicApi
+        super.init(nibName: "HomeViewController", bundle: nil)
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    deinit{
+        print("homeview deinit")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        domainName = "http://localhost:3000/"
         tableview.delegate = self
         tableview.dataSource = self
+        tableview.refreshControl = refreshControl
+        
         tableview.register(UINib(nibName: "ListMusicTableViewCell", bundle: nil), forCellReuseIdentifier: ListMusicTableViewCell.description())
         tableview.register(UINib(nibName: "AlbumTableViewCell", bundle: nil), forCellReuseIdentifier: AlbumTableViewCell.description())
-        
+        addingSearchController()
         getCategory()
         getMusic()
+        
     }
-    override func viewWillAppear(_ animated: Bool) {
+    
+    @objc func loadDataApi(){
         getCategory()
         getMusic()
     }
     
+    func addingSearchController(){
+        searchBar.delegate = self
+        searchBar.placeholder = "Search Song's Name..."
+    }
+    
+    func filterCurrentDataSource(searchTerm: String){
+        if(searchTerm.count > 0){
+            let filterResults = arrMusic.filter { $0.nameAlbum.replacingOccurrences(of: " ", with: "").lowercased().contains(searchTerm.replacingOccurrences(of: " ", with: "").lowercased())}
+            currentDataSource = filterResults
+            tableview.reloadData()
+        }else{
+            currentDataSource = arrMusic
+            tableview.reloadData()
+        }
+    }
+    
+ 
     func getCategory(){
-        let url = URL(string: domainName + "category/list")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let task = URLSession.shared.dataTask(with: request) {data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        categoryAPI.getListCategory() { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Category_Result.self, from: data)
-            if(dataInfo?.result == 1){
-                self.arrayCategory = dataInfo!.data
-                DispatchQueue.main.async {
-                    self.tableview.reloadData()
-                }
-                
+            self.arrayCategory = value.data
+            DispatchQueue.main.async {
+                self.tableview.reloadData()
             }
         }
-        task.resume()
     }
     
     func getMusic(){
-        let url = URL(string: domainName + "music")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        musicAPI.getListMusic { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Music_Result.self, from: data)
-            if(dataInfo?.result == 1){
-                self.arrMusic = dataInfo!.data
-                
-                DispatchQueue.main.async {
-                    self.tableview.reloadData()
-                }
+            self.arrMusic = value.data
+            self.currentDataSource = self.arrMusic
+            DispatchQueue.main.async {
+                self.tableview.reloadData()
             }
-        }.resume()
+        }
     }
 }
 
@@ -94,7 +111,7 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
         case 1:
             return 1
         default:
-            return arrMusic.count
+            return currentDataSource.count
         }
     }
     
@@ -104,11 +121,13 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
             let cell = tableView.dequeueReusableCell(withIdentifier: AlbumTableViewCell.description(), for: indexPath) as! AlbumTableViewCell
             cell.labelTitle.text = "Album"
             cell.album = arrayCategory
-            cell.CollectionView.reloadData()
             cell.handleAlbum = { [weak self] id in
-                let listmusicVC = ListMusicViewController()
-                listmusicVC._id = id
-                self?.navigationController?.pushViewController(listmusicVC, animated: true)
+                guard let self = self else{
+                    return
+                }
+                let listmusicVC = ListMusicViewController(musicApi: self.musicAPI)
+                listmusicVC.id = id
+                self.navigationController?.pushViewController(listmusicVC, animated: true)
             }
             return cell
         case 1:
@@ -117,16 +136,17 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier:  ListMusicTableViewCell.description(), for: indexPath) as! ListMusicTableViewCell
-            cell.buttonPostBy.setTitle("Post By : " + arrMusic[indexPath.row].accountUpload![0].name, for: .normal)
+            cell.buttonPostBy.setTitle("Post By : " + currentDataSource[indexPath.row].accountUpload![0].name, for: .normal)
             cell.buttonPostBy.addTarget(self, action: #selector(btnPostBy(sender:)), for: .touchUpInside)
             cell.buttonPostBy.tag = indexPath.row
-            cell.labelNameSinger.text = arrMusic[indexPath.row].nameSinger
+            
+            cell.labelNameSinger.text = currentDataSource[indexPath.row].nameSinger
             cell.labelNameMusic.lineBreakMode = NSLineBreakMode.byWordWrapping
             cell.labelNameMusic.numberOfLines = 0
             cell.labelNameSinger.lineBreakMode = NSLineBreakMode.byWordWrapping
             cell.labelNameSinger.numberOfLines = 0
-            cell.labelNameMusic.text = arrMusic[indexPath.row].nameAlbum
-            
+            cell.labelNameMusic.text = currentDataSource[indexPath.row].nameAlbum
+            cell.images.sd_setImage(with: URL(string: currentDataSource[indexPath.row].image), placeholderImage: UIImage(named: "placeholder.png"))
             return cell
         }
     }
@@ -147,42 +167,53 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
         case 1:
             return
         default:
-            let playMusic = PlayMusicViewController()
-            playMusic.music = arrMusic[indexPath.row]
+            let playMusic = PlayMusicViewController(musicAPI: musicAPI)
+            playMusic.music = currentDataSource[indexPath.row]
             if let token = UserDefaults.standard.string(forKey: "token") {
-                let url = URL(string: self.domainName + "account/recent")
-                let _id = arrMusic[indexPath.row]._id
-                var request = URLRequest(url: url!)
-                let paramString = "token=" + token + "&_id=" + _id
-                let postDataString = paramString.data(using: .utf8)
-                request.httpMethod = "POST"
-                request.httpBody = postDataString
-                URLSession.shared.dataTask(with: request) { data, response, error in
-                    guard let _ = data,
-                          let _ = response as?  HTTPURLResponse,
-                          error == nil else{
-                        print("Error from server", error ?? "Error is underfind")
+                let id = currentDataSource[indexPath.row]._id
+                musicAPI.addRecent(token: token, id: id, completionHandler: { [weak self] value in
+                    guard let self = self else{
                         return
                     }
-                    
                     DispatchQueue.main.async {
-                        self.navigationController?.pushViewController(playMusic, animated: true)
+                        self.present(playMusic, animated: true)
                     }
-                }.resume()
+                })
+                
             }else{
-                self.navigationController?.pushViewController(playMusic, animated: true)
+                self.present(playMusic, animated: true)
             }
         }
         
     }
     @objc func btnPostBy(sender: UIButton){
+        print(currentDataSource[sender.tag].idAccount)
         guard tableview.indexPathForRow(at: sender.convert(sender.frame.origin, to: tableview)) != nil else {
             return
         }
-        let musicOfAccVC = MusicOfAccountViewController()
-        musicOfAccVC.idAccount = arrMusic[sender.tag].idAccount
+        let musicOfAccVC = MusicOfAccountViewController(musicAPI: musicAPI)
+        musicOfAccVC.idAccount = currentDataSource[sender.tag].idAccount
         self.navigationController?.pushViewController(musicOfAccVC, animated: false)
     }
 
 
+}
+//extension HomeViewController : UISearchResultsUpdating{
+//    func updateSearchResults(for searchController: UISearchController) {
+//        if let searchText = searchController.searchBar.text{
+//            filterCurrentDataSource(searchTerm: searchText)
+//        }
+//    }
+//}
+extension HomeViewController : UISearchBarDelegate{
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if let searchText = searchBar.text, !searchText.isEmpty {
+            filterCurrentDataSource(searchTerm: searchText)
+            tableview.reloadData()
+        } else {
+            currentDataSource = arrMusic
+            tableview.reloadData()
+        }
+    }
+   
 }

@@ -6,16 +6,27 @@
 //
 
 import UIKit
-
+import SDWebImage
 class YourMusicViewController: UIViewController {
-    var domainName:String!
     var arrMusic: Array<MusicInfor> = []
-    let clickSw = UISwitch(frame: .zero)
+    var clickSw = UISwitch(frame: .zero)
     var token:String!
     @IBOutlet weak var tableView: UITableView!
+    var musicAPI: MusicApiService
+    init(musicAPI: MusicApiService) {
+        self.musicAPI = musicAPI
+        super.init(nibName: "YourMusicViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit{
+        print("your music deinint")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        domainName = "http://localhost:3000/"
         token = UserDefaults.standard.string(forKey: "token")!
         getMusic()
         tableView.register(UINib(nibName: "ListMusicTableViewCell", bundle: nil), forCellReuseIdentifier: ListMusicTableViewCell.description())
@@ -29,28 +40,17 @@ class YourMusicViewController: UIViewController {
     }
     
     func getMusic(){
-        let url = URL(string: domainName + "music/accountId")
-        var request = URLRequest(url: url!)
-        let paramString = "token=" + token
-        let postDataString = paramString.data(using: .utf8)
-        request.httpMethod = "POST"
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        musicAPI.getMusicByToken(token: token, completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Music_Result.self, from: data)
-            if dataInfo?.result == 1{
-                self.arrMusic = dataInfo!.data
+            if value.result == 1{
+                self.arrMusic = value.data
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
             }
-        }.resume()
+        })
     }
 }
 extension YourMusicViewController : UITableViewDelegate,UITableViewDataSource{
@@ -67,6 +67,7 @@ extension YourMusicViewController : UITableViewDelegate,UITableViewDataSource{
         cell.labelNameMusic.numberOfLines = 0
         cell.labelNameSinger.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.labelNameSinger.numberOfLines = 0
+        cell.images.sd_setImage(with: URL(string: self.arrMusic[indexPath.row].image), placeholderImage: UIImage(named: "placeholder.png"))
         
         
         let clickSw = UISwitch(frame: .zero)
@@ -86,34 +87,13 @@ extension YourMusicViewController : UITableViewDelegate,UITableViewDataSource{
         return 150
     }
     @objc func didChangeSwitch(_ sender:UISwitch){
-        let url = URL(string: domainName + "music/updateStatus")
         let id = arrMusic[sender.tag]._id
-        var paramString = ""
-        var request = URLRequest(url: url!)
+        var status = ""
         if sender.isOn{
-            print("on")
-            paramString = "token=" + token + "&id=" + id + "&status=true"
+            status = "true"
         }else{
-            paramString = "token=" + token + "&id=" + id + "&status=false"
+            status = "false"
         }
-        let postDataString = paramString.data(using: .utf8)
-        request.httpMethod = "POST"
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
-                return
-            }
-            let jsonDecoder = JSONDecoder()
-            _ = try? jsonDecoder.decode(Result.self, from: data)
-            print(String(data: data, encoding: .utf8)!)
-        }.resume()
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //        let playMusic = PlayMusicViewController()
-        //        playMusic.music = self.arrMusic[indexPath.row]
-        
+        musicAPI.updateStatusMusic(token: token, id: id, status: status)
     }
 }

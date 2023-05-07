@@ -9,10 +9,13 @@ import UIKit
 
 class TabBarViewController: UITabBarController {
     
+    var musicApiService : MusicApiService!
+    var categoryApiService : CategoryApiService!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let viewOnline = HomeViewController()
+        musicApiService = MusicApi()
+        categoryApiService = CategoryApi()
+        let viewOnline = HomeViewController(musicApi: musicApiService,categoryAPI: categoryApiService)
         viewOnline.tabBarItem = UITabBarItem(title: "Online", image: UIImage(named: "music"), tag: 0)
         let navviewOnline = UINavigationController(rootViewController: viewOnline)
         let viewAccount = CheckAccountViewController()

@@ -6,18 +6,29 @@
 //
 
 import UIKit
-
+import SDWebImage
 class ListUpdateViewController: UIViewController {
-    
-    var domainName:String!
     var arrMusic: Array<MusicInfor> = []
     let clickSw = UISwitch(frame: .zero)
-    var token:String!
     @IBOutlet weak var tableView: UITableView!
+    var token:String!
+    
+    var musicAPI:MusicApiService
+    
+    init(musicAPI: MusicApiService) {
+        self.musicAPI = musicAPI
+        super.init(nibName: "ListUpdateViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    deinit{
+        print("list update deinit")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        domainName = "http://localhost:3000/"
         token = UserDefaults.standard.string(forKey: "token")!
         getMusic()
         tableView.register(UINib(nibName: "ListMusicTableViewCell", bundle: nil), forCellReuseIdentifier: ListMusicTableViewCell.description())
@@ -31,28 +42,17 @@ class ListUpdateViewController: UIViewController {
     }
     
     func getMusic(){
-        let url = URL(string: domainName + "music/accountId")
-        var request = URLRequest(url: url!)
-        let paramString = "token=" + token
-        let postDataString = paramString.data(using: .utf8)
-        request.httpMethod = "POST"
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        musicAPI.getMusicByToken(token: token, completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Music_Result.self, from: data)
-            if dataInfo?.result == 1{
-                self.arrMusic = dataInfo!.data
+            if value.result == 1{
+                self.arrMusic = value.data
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
             }
-        }.resume()
+        })
     }
 }
 extension ListUpdateViewController : UITableViewDelegate,UITableViewDataSource{
@@ -69,7 +69,8 @@ extension ListUpdateViewController : UITableViewDelegate,UITableViewDataSource{
         cell.labelNameMusic.numberOfLines = 0
         cell.labelNameSinger.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.labelNameSinger.numberOfLines = 0
-        
+        cell.images.sd_setImage(with: URL(string: arrMusic[indexPath.row].image), placeholderImage: UIImage(named: "placeholder.png"))
+   
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -77,7 +78,8 @@ extension ListUpdateViewController : UITableViewDelegate,UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let updateVC = HomeUploadViewController()
+        let categoryApi : CategoryApiService = CategoryApi()
+        let updateVC = HomeUploadViewController(categoryAPI: categoryApi, musicAPI: musicAPI)
         updateVC.statusUpdate = false
         updateVC.music = arrMusic[indexPath.row]
         self.navigationController?.pushViewController(updateVC, animated: true)

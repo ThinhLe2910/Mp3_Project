@@ -5,13 +5,13 @@
 //  Created by Thinh on 04/04/2023.
 //
 import UIKit
+import SDWebImage
 struct ListRecent{
     var open :Bool
     var data: [MusicInfor]
 }
 class DashboardViewController: UIViewController {
     var newImage:String!
-    var domainName:String!
     var list : [Section]!
     var arr : DataRecent!
     var recent:[MusicInfor]=[]
@@ -19,11 +19,24 @@ class DashboardViewController: UIViewController {
     var listRecent : ListRecent?
     @IBOutlet weak var avatarView: UIImageView!
     @IBOutlet weak var tableView: UITableView!
+    
+    var accountAPI:AccountAPIService
+    init(accountAPI: AccountAPIService) {
+        self.accountAPI = accountAPI
+        super.init(nibName: "DashboardViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+   
+    deinit{
+        print("dasboard deinint")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.hidesBackButton = true
         self.listRecent = ListRecent(open: false, data:[])
-        domainName = "http://localhost:3000/"
         token = UserDefaults.standard.string(forKey: "token")!
         avatarView.layer.cornerRadius = 100
         avatarView.clipsToBounds = true
@@ -51,6 +64,12 @@ class DashboardViewController: UIViewController {
                 data: [
                     CellData(title: "Information", img: UIImage(named: "privacy")!),
                     CellData(title: "Changle Password", img: UIImage(named: "write")!),
+                ]
+            ),
+            Section(
+                open:false,
+                data: [
+                    CellData(title: "Dowload", img: UIImage(named: "cloud")!),
                 ]
             ),
             
@@ -83,10 +102,10 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
             }else{
                 return listRecent!.data.count
             }
-        case 4:
+        case 5:
             return 1
         default:
-            if(!list[section - 1].open)
+            if(!list[section-1].open)
             {
                 return 0
             }else{
@@ -106,10 +125,12 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
             cell.labelNameSinger.lineBreakMode = NSLineBreakMode.byWordWrapping
             cell.labelNameSinger.numberOfLines = 0
             cell.labelNameMusic.text = recent[indexPath.row].nameAlbum
+            cell.images.sd_setImage(with: URL(string: self.recent[indexPath.row].image), placeholderImage: UIImage(named: "placeholder.png"))
+                    
             cell.backgroundColor =
             #colorLiteral(red: 0.8884527683, green: 0.9174801707, blue: 0.9368647933, alpha: 1)
             return cell
-        case 4:
+        case 5:
             let cell = tableView.dequeueReusableCell(withIdentifier: ButtonLogOutTableViewCell.description(), for: indexPath) as! ButtonLogOutTableViewCell
             cell.btnLogout.tag = indexPath.row
             cell.btnLogout.addTarget(self, action: #selector(Logout(sender:)), for: .touchUpInside)
@@ -126,7 +147,7 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         
-        return 5
+        return 6
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let button = UIButton()
@@ -154,6 +175,11 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
             button.setTitle("Account", for: .normal)
             button.setTitleColor(.black, for: .normal)
             return button
+        case 4 :
+            button.setImage(UIImage(named: "cloud"), for: .normal)
+            button.setTitle("Download", for: .normal)
+            button.setTitleColor(.black, for: .normal)
+            return button
         default :
             let label = UILabel(frame: .zero)
             return label
@@ -173,7 +199,7 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
     }
     @objc func openSection(sender:UIButton){
         let section = sender.tag
-        var indexPaths = [IndexPath]()
+         var indexPaths = [IndexPath]()
         switch section {
         case 0 :
             for row in listRecent!.data.indices{
@@ -204,115 +230,84 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
         
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let categoryApi : CategoryApiService = CategoryApi()
+        let musicAPI : MusicApiService = MusicApi()
         switch indexPath.section {
         case 0 :
-            let playmusicVC = PlayMusicViewController()
+            let playmusicVC = PlayMusicViewController(musicAPI: musicAPI)
             playmusicVC.music = recent[indexPath.row]
             self.navigationController?.pushViewController(playmusicVC, animated: true)
         case 1:
             switch indexPath.row{
             case 0 :
-                self.navigationController?.pushViewController(YourMusicViewController(), animated: true)
+                self.navigationController?.pushViewController(YourMusicViewController(musicAPI: musicAPI), animated: true)
             case 1 :
-                let yourMusicVC = ListUpdateViewController()
-                self.navigationController?.pushViewController(yourMusicVC, animated: true)
+                self.navigationController?.pushViewController(ListUpdateViewController(musicAPI: musicAPI), animated: true)
             default :
-                self.navigationController?.pushViewController(DeleteMusicViewController(), animated: true)
+                self.navigationController?.pushViewController(DeleteViewController(musicAPI: musicAPI), animated: true)
             }
         case 2:
-            let uploadVC = HomeUploadViewController()
+            let uploadVC = HomeUploadViewController(categoryAPI: categoryApi, musicAPI: musicAPI)
             uploadVC.statusUpload = false
             self.navigationController?.pushViewController(uploadVC, animated: true)
         case 3:
             switch indexPath.row{
             case 0 :
-                self.navigationController?.pushViewController(InformationViewController(), animated: true)
+                self.navigationController?.pushViewController(InformationViewController(accountAPI: accountAPI), animated: true)
             default:
-                self.navigationController?.pushViewController(ChangePasswordViewController(), animated: true)
+                self.navigationController?.pushViewController(ChangePasswordViewController(accountAPI: accountAPI), animated: true)
             }
+        case 4:
+            self.navigationController?.pushViewController(DownloadViewController(), animated: true)
         default:
             print("Logout")
         }
     }
     
     func getMusic(){
-        let url = URL(string: self.domainName + "get/recent")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let paramString = "token=" + token
-        let postDataString = paramString.data(using: .utf8)
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { [self] data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        accountAPI.getRecentAccount(token: token, completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Account_Recent.self, from: data)
-            if(dataInfo?.result == 1){
-                self.arr = dataInfo!.data[0]
-                self.recent = (arr.listrecent)!
-                self.listRecent?.data = (arr.listrecent)!
-                let urlAvtar = URL(string: self.domainName + "upload/image/" + arr.avatarImage)!
-                let getAvater = DispatchQueue(label: "avatar")
-                getAvater.async {
-                    do{
-                        let data = try Data(contentsOf: urlAvtar)
+            if(value.result == 1){
+                self.arr = value.data[0]
+                self.recent = self.arr.listrecent!
+                self.listRecent?.data = self.arr.listrecent!
                         DispatchQueue.main.async {
-                            
-                            self.avatarView.image = UIImage(data: data)
-                            self.tableView.reloadData()
+                            self.avatarView.sd_setImage(with: URL(string: self.arr.avatarImage), placeholderImage: UIImage(named: "placeholder.png"))
                         }
-                    }catch{}
                 }
-            }
-        }.resume()
+        })
     }
     
     @objc func Logout(sender: UIButton){
         guard tableView.indexPathForRow(at: sender.convert(sender.frame.origin, to: tableView)) != nil else {
             return
         }
-        let url = URL(string: domainName + "logout")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let paramString = "token=" + token
-        let postDataString = paramString.data(using: .utf8)
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        accountAPI.logout(token: token, completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Result.self, from: data)
-            if(dataInfo?.result==1){
+            if(value.result==1){
                 DispatchQueue.main.async {
                     UserDefaults.standard.removeObject(forKey: "token")
-//                    let window = UIApplication.shared.keyWindow
-//                    let loginVC = LoginViewController()
-//                    window?.rootViewController = loginVC
-//                    window?.makeKeyAndVisible()
-                    self.navigationController?.pushViewController(LoginViewController(), animated: false)
+                    self.navigationController?.pushViewController(LoginViewController(accountAPI: self.accountAPI), animated: false)
                 }
             }
-        }.resume()
+        })
     }
 }
+                
 
 extension DashboardViewController:UINavigationControllerDelegate,UIImagePickerControllerDelegate{
     
     @IBAction func clickImage(_ sender: Any) {
         let action = UIAlertController(title: "Notification", message: "Choose Avatar", preferredStyle: .actionSheet)
-        let choosePhoto = UIAlertAction(title: "Choose Photo In Library", style: .default) { e in
+        let choosePhoto = UIAlertAction(title: "Choose Photo In Library", style: .default) {[weak self] e in
             let image = UIImagePickerController()
             image.delegate = self
             image.sourceType = .photoLibrary
-            self.present(image, animated: true)
+            self!.present(image, animated: true)
         }
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         action.addAction(choosePhoto)
@@ -320,69 +315,30 @@ extension DashboardViewController:UINavigationControllerDelegate,UIImagePickerCo
         present(action, animated: true,completion: nil)
     }
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let img = info[UIImagePickerController.InfoKey(rawValue: UIImagePickerController.InfoKey.originalImage.rawValue)] as? UIImage{
-            avatarView.image = img
-        }
-        self.dismiss(animated: true)
-        let action = UIAlertController(title: "Notification", message: "Do you want to save this?", preferredStyle: .actionSheet)
-        let save = UIAlertAction(title: "Save", style: .default) { e in
-            let url = URL(string: self.domainName + "uploadAvatar")
-            let boundary = UUID().uuidString
-            let session = URLSession.shared
-            var urlRequest = URLRequest(url: url!)
-            urlRequest.httpMethod = "POST"
-            urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            var data = Data()
-            data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
-            data.append("Content-Disposition: form-data; name=\"avatar\"; filename=\"Mp3-App.png\"\r\n".data(using: .utf8)!)
-            data.append("Content-Type: image/png\r\n\r\n".data(using: .utf8)!)
-            data.append(self.avatarView.image!.pngData()!)
-            data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
-            
-            session.uploadTask(with: urlRequest, from: data, completionHandler: { responseData, response, error in
-                if error == nil{
-                    let jsonDecoder = JSONDecoder()
-                    let dataInfo = try? jsonDecoder.decode(Result.self, from: responseData! )
-                    if dataInfo?.result == 1{
-                        self.newImage = dataInfo?.data
-                        self.saveImage()
-                    }
-                    
+        if let img = info[UIImagePickerController.InfoKey(rawValue: UIImagePickerController.InfoKey.imageURL.rawValue)] as? URL{
+            avatarView.image = UIImage(contentsOfFile: img.path)
+            self.dismiss(animated: true) {
+                let action = UIAlertController(title: "Notification", message: "Do you want to save this?", preferredStyle: .actionSheet)
+                let save = UIAlertAction(title: "Save", style: .default) { [weak self] e in
+                    self!.accountAPI.uploadImg(url: img, completionHandler: { [weak self] value in
+                        guard let self = self else{
+                            return
+                        }
+                            if value.result == 1{
+                                self.newImage = value.data
+                                self.saveImage()
+                                }
+                    })
                 }
-            }).resume()
+                let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+                action.addAction(save)
+                action.addAction(cancel)
+                self.present(action, animated: true,completion: nil)
+            }
         }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        action.addAction(save)
-        action.addAction(cancel)
-        self.present(action, animated: true,completion: nil)
     }
     func saveImage(){
-        let url = URL(string: domainName + "account/updateAvatar")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let paramString = "token=" + token + "&avatarImage=" + newImage
-        let postDataString = paramString.data(using: .utf8)
-        request.httpBody = postDataString
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
-                return
-            }
-            let jsonDecoder = JSONDecoder()
-            let _ = try? jsonDecoder.decode(Result.self, from: data)
-        }.resume()
+        accountAPI.saveImg(token: token, avatarImage: newImage)
     }
-}
-extension DashboardViewController:Update_Res_delegate{
-    func message(a: String) {
-        let aleart = UIAlertController(title: "Notification", message: a, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default)
-        aleart.addAction(ok)
-        present(aleart,animated: true)
-    }
-    
-    
 }
 

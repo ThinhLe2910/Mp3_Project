@@ -18,4 +18,5 @@ struct MusicInfor: Decodable {
     let status: Bool
     let Category: [CategoryInfor]?
     let accountUpload: [AccountInfor]?
+    let image : String
 }

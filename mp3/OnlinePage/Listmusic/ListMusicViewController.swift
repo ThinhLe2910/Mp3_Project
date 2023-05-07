@@ -8,13 +8,27 @@
 import UIKit
 
 class ListMusicViewController: UIViewController {
-    var _id :String = ""
-    var domainName:String!
+    
+    var id :String = ""
     var arrMusic: Array<MusicInfor> = []
     @IBOutlet weak var tableListMusicView: UITableView!
+    var musicApi:MusicApiService
+    
+    init(musicApi: MusicApiService) {
+        self.musicApi = musicApi
+        super.init(nibName: "ListMusicViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    deinit{
+        print("list music deinit")
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        domainName = "http://localhost:3000/"
         getMusicOfCategory()
         tableListMusicView.dataSource = self
         tableListMusicView.delegate = self
@@ -24,29 +38,15 @@ class ListMusicViewController: UIViewController {
         getMusicOfCategory()
     }
     func getMusicOfCategory(){
-        let url = URL(string: domainName + "music/categoryId")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        let paramString = "categoryId=" + _id
-        let postDataString = paramString.data(using: .utf8)
-        request.httpBody = postDataString
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let _ = response as?  HTTPURLResponse,
-                  error == nil else{
-                print("Error from server", error ?? "Error is underfind")
+        musicApi.getMusicByCategoryId(categoryId: id, completionHandler: { [weak self] value in
+            guard let self = self else{
                 return
             }
-            let jsonDecoder = JSONDecoder()
-            let dataInfo = try? jsonDecoder.decode(Music_Result.self, from: data)
-            if(dataInfo?.result == 1){
-                self.arrMusic = dataInfo!.data
-                DispatchQueue.main.async {
-                    self.tableListMusicView.reloadData()
-                }
+            self.arrMusic = value.data
+            DispatchQueue.main.async {
+                self.tableListMusicView.reloadData()
             }
-        }.resume()
+        })
     }
 }
 extension ListMusicViewController: UITableViewDelegate,UITableViewDataSource{
@@ -65,47 +65,37 @@ extension ListMusicViewController: UITableViewDelegate,UITableViewDataSource{
         cell.labelNameSinger.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.labelNameSinger.numberOfLines = 0
         cell.labelNameMusic.text = arrMusic[indexPath.row].nameAlbum
-        return cell
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let playMusic = PlayMusicViewController()
-        playMusic.music = arrMusic[indexPath.row]
-        if let token = UserDefaults.standard.string(forKey: "token") {
-            let url = URL(string: self.domainName + "account/recent")
-            let _id = arrMusic[indexPath.row]._id
-            var request = URLRequest(url: url!)
-            let paramString = "token=" + token + "&_id=" + _id
-            let postDataString = paramString.data(using: .utf8)
-            request.httpMethod = "POST"
-            request.httpBody = postDataString
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data,
-                      let _ = response as?  HTTPURLResponse,
-                      error == nil else{
-                    print("Error from server", error ?? "Error is underfind")
-                    return
+        cell.images.sd_setImage(with: URL(string: arrMusic[indexPath.row].image), placeholderImage: UIImage(named: "placeholder.png"))
+    return cell
+}
+func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    return 150
+}
+func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let playMusic = PlayMusicViewController(musicAPI: musicApi)
+    playMusic.music = arrMusic[indexPath.row]
+    if let token = UserDefaults.standard.string(forKey: "token") {
+        let id = arrMusic[indexPath.row]._id
+        musicApi.addRecent(token: token, id: id, completionHandler: { [weak self] value in
+            guard let self = self else{
+                return
+            }
+            DispatchQueue.main.async {
+                if value.result == 1{
+                    self.navigationController?.pushViewController(playMusic, animated: true)
                 }
-                let jsonDecoder = JSONDecoder()
-                let dataInfo = try? jsonDecoder.decode(Result.self, from: data)
-                DispatchQueue.main.async {
-                    if dataInfo?.result == 1{
-                        self.navigationController?.pushViewController(playMusic, animated: true)
-                    }
-                }
-            }.resume()
-        }else{
-            self.navigationController?.pushViewController(playMusic, animated: true)
-        }
+            }
+        })
+    }else{
+        self.navigationController?.pushViewController(playMusic, animated: true)
     }
-    @objc func btnPostBy(sender: UIButton){
-        guard tableListMusicView.indexPathForRow(at: sender.convert(sender.frame.origin, to: tableListMusicView)) != nil else {
-            return
-        }
-        let musicOfAccVC = MusicOfAccountViewController()
-        musicOfAccVC.idAccount = arrMusic[sender.tag].idAccount
-        self.navigationController?.pushViewController(musicOfAccVC, animated: false)
+}
+@objc func btnPostBy(sender: UIButton){
+    guard tableListMusicView.indexPathForRow(at: sender.convert(sender.frame.origin, to: tableListMusicView)) != nil else {
+        return
     }
+    let musicOfAccVC = MusicOfAccountViewController(musicAPI: musicApi)
+    musicOfAccVC.idAccount = arrMusic[sender.tag].idAccount
+    self.navigationController?.pushViewController(musicOfAccVC, animated: false)
+}
 }

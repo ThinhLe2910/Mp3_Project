@@ -14,4 +14,5 @@ struct Category_Result:Decodable{
 struct CategoryInfor:Decodable{
     var name:String
     var _id:String
+    var image:String
 }

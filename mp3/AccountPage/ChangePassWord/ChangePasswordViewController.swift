@@ -8,15 +8,27 @@
 import UIKit
 
 class ChangePasswordViewController: UIViewController {
-    var domainName:String!
     var token:String!
     @IBOutlet weak var txtNewPas: UITextField!
     @IBOutlet weak var txtComfirmPassword: UITextField!
     @IBOutlet weak var txtCurrentPassword: UITextField!
+    var accountAPI:AccountAPIService
+    
+    init(accountAPI: AccountAPIService) {
+        self.accountAPI = accountAPI
+        super.init(nibName: "ChangePasswordViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit{
+        print("change password deinit")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         token = UserDefaults.standard.string(forKey: "token")!
-        domainName = "http://localhost:3000/"
         // Do any additional setup after loading the view.
     }
 
@@ -24,38 +36,28 @@ class ChangePasswordViewController: UIViewController {
     @IBAction func btnChangePassword(_ sender: Any) {
         let alert = UIAlertController(title: "Message", message: "Do you want to change password", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "OK", style: .default,handler: { action in
-            let url = URL(string: self.domainName! + "account/change-password")
+        alert.addAction(UIAlertAction(title: "OK", style: .default,handler: {[weak self] action in
+            guard let self = self else{
+                return
+            }
             let newpass = self.txtNewPas.text!
             let current = self.txtCurrentPassword.text!
             let comfirm = self.txtComfirmPassword.text!
-            var request = URLRequest(url: url!)
-            request.httpMethod = "POST"
-            let paramString = "token=" + self.token! + "&password=" + newpass
-            + "&currentPassword=" + current + "&comfirmPassword=" + comfirm
-            let postDataString = paramString.data(using: .utf8)
-            request.httpBody = postDataString
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data,
-                      let _ = response as?  HTTPURLResponse,
-                      error == nil else{
-                    print("Error from server", error ?? "Error is underfind")
+            self.accountAPI.changePassword(token: self.token, newpass: newpass, current: current, comfirm: comfirm, completionHandler: { [weak self] value in
+                guard let self = self else{
                     return
                 }
-                print(String(data: data, encoding: .utf8)!)
-                let jsonDecoder = JSONDecoder()
-                let dataInfo = try? jsonDecoder.decode(Result.self, from: data)
                 DispatchQueue.main.async {
-                    if dataInfo?.result == 1{
-                        self.notiSuccessfully(a:dataInfo!.message)
+                    if value.result == 1{
+                        self.notiSuccessfully(a:value.message)
                     }else{
-                        let aleart = UIAlertController(title: "Notification", message: dataInfo?.message, preferredStyle: .alert)
+                        let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
                         let ok = UIAlertAction(title: "OK", style: .default)
                         aleart.addAction(ok)
                         self.present(aleart,animated: true)
                     }
                 }
-            }.resume()
+            })
         }))
         self.present(alert, animated: true)
     }

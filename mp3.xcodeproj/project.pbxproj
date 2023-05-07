@@ -12,6 +12,15 @@
 		25139E9129D6C91D00D812BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 25139E9029D6C91D00D812BE /* Assets.xcassets */; };
 		2513CA2229E1D5E0004DD559 /* HomeUploadViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2513CA2129E1D5E0004DD559 /* HomeUploadViewController.xib */; };
 		2513CA2429E1D5EB004DD559 /* YourMusicViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2513CA2329E1D5EB004DD559 /* YourMusicViewController.xib */; };
+		2513D7F129F0585B0090C902 /* CategoryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2513D7F029F0585B0090C902 /* CategoryAPI.swift */; };
+		2513D7F329F1B8ED0090C902 /* MusicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2513D7F229F1B8ED0090C902 /* MusicAPI.swift */; };
+		2513D7F529F2555A0090C902 /* AccountAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2513D7F429F2555A0090C902 /* AccountAPI.swift */; };
+		2513D7FC29F9B1390090C902 /* DeleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2513D7FA29F9B1390090C902 /* DeleteViewController.swift */; };
+		2513D7FD29F9B1390090C902 /* DeleteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2513D7FB29F9B1390090C902 /* DeleteViewController.xib */; };
+		25238BDF2A02F3CC003EB0E5 /* DownloadTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */; };
+		25238BE02A02F3CC003EB0E5 /* DownloadTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */; };
+		25238BE32A02FADC003EB0E5 /* DownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25238BE12A02FADC003EB0E5 /* DownloadViewController.swift */; };
+		25238BE42A02FADC003EB0E5 /* DownloadViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25238BE22A02FADC003EB0E5 /* DownloadViewController.xib */; };
 		2532AC6E29DC775800AAA254 /* ListUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2532AC6C29DC775800AAA254 /* ListUpdateViewController.swift */; };
 		2532AC6F29DC775800AAA254 /* ListUpdateViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2532AC6D29DC775800AAA254 /* ListUpdateViewController.xib */; };
 		2532AC7129DCB3B300AAA254 /* Account_Recent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2532AC7029DCB3B300AAA254 /* Account_Recent.swift */; };
@@ -22,8 +31,6 @@
 		2540C75929DBAE2B00C88868 /* UploadTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2540C75729DBAE2B00C88868 /* UploadTableViewCell.swift */; };
 		2540C75A29DBAE2B00C88868 /* UploadTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2540C75829DBAE2B00C88868 /* UploadTableViewCell.xib */; };
 		2540C75C29DBB8B200C88868 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2540C75B29DBB8B200C88868 /* Section.swift */; };
-		2540C76129DBF36100C88868 /* DeleteMusicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2540C75F29DBF36100C88868 /* DeleteMusicViewController.swift */; };
-		2540C76229DBF36100C88868 /* DeleteMusicViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2540C76029DBF36100C88868 /* DeleteMusicViewController.xib */; };
 		2543D27B29DB003300812B9C /* YourMusicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2543D27929DB003300812B9C /* YourMusicViewController.swift */; };
 		257366BB29E1CA98005BA8FF /* MusicOfAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 257366B929E1CA98005BA8FF /* MusicOfAccountViewController.swift */; };
 		257366BC29E1CA98005BA8FF /* MusicOfAccountViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 257366BA29E1CA98005BA8FF /* MusicOfAccountViewController.xib */; };
@@ -51,7 +58,6 @@
 		25A1047129D62B1E0066089C /* InformationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25A1046F29D62B1E0066089C /* InformationViewController.xib */; };
 		25C073AB29D96ADD00B69CC1 /* CheckAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C073AA29D96ADD00B69CC1 /* CheckAccountViewController.swift */; };
 		25E57E5329D3542B00246F3B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E57E5229D3542B00246F3B /* AppDelegate.swift */; };
-		25E57E5529D3542B00246F3B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E57E5429D3542B00246F3B /* SceneDelegate.swift */; };
 		25E57E5729D3542B00246F3B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E57E5629D3542B00246F3B /* ViewController.swift */; };
 		25E57E5A29D3542B00246F3B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25E57E5829D3542B00246F3B /* Main.storyboard */; };
 		25E57E5F29D3542D00246F3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25E57E5D29D3542D00246F3B /* LaunchScreen.storyboard */; };
@@ -68,6 +74,15 @@
 		25139E9029D6C91D00D812BE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2513CA2129E1D5E0004DD559 /* HomeUploadViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeUploadViewController.xib; sourceTree = "<group>"; };
 		2513CA2329E1D5EB004DD559 /* YourMusicViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = YourMusicViewController.xib; sourceTree = "<group>"; };
+		2513D7F029F0585B0090C902 /* CategoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAPI.swift; sourceTree = "<group>"; };
+		2513D7F229F1B8ED0090C902 /* MusicAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicAPI.swift; sourceTree = "<group>"; };
+		2513D7F429F2555A0090C902 /* AccountAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAPI.swift; sourceTree = "<group>"; };
+		2513D7FA29F9B1390090C902 /* DeleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteViewController.swift; sourceTree = "<group>"; };
+		2513D7FB29F9B1390090C902 /* DeleteViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteViewController.xib; sourceTree = "<group>"; };
+		25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTableViewCell.swift; sourceTree = "<group>"; };
+		25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DownloadTableViewCell.xib; sourceTree = "<group>"; };
+		25238BE12A02FADC003EB0E5 /* DownloadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadViewController.swift; sourceTree = "<group>"; };
+		25238BE22A02FADC003EB0E5 /* DownloadViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DownloadViewController.xib; sourceTree = "<group>"; };
 		2532AC6C29DC775800AAA254 /* ListUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListUpdateViewController.swift; sourceTree = "<group>"; };
 		2532AC6D29DC775800AAA254 /* ListUpdateViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListUpdateViewController.xib; sourceTree = "<group>"; };
 		2532AC7029DCB3B300AAA254 /* Account_Recent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account_Recent.swift; sourceTree = "<group>"; };
@@ -78,8 +93,6 @@
 		2540C75729DBAE2B00C88868 /* UploadTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadTableViewCell.swift; sourceTree = "<group>"; };
 		2540C75829DBAE2B00C88868 /* UploadTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UploadTableViewCell.xib; sourceTree = "<group>"; };
 		2540C75B29DBB8B200C88868 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
-		2540C75F29DBF36100C88868 /* DeleteMusicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteMusicViewController.swift; sourceTree = "<group>"; };
-		2540C76029DBF36100C88868 /* DeleteMusicViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteMusicViewController.xib; sourceTree = "<group>"; };
 		2543D27929DB003300812B9C /* YourMusicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourMusicViewController.swift; sourceTree = "<group>"; };
 		257366B929E1CA98005BA8FF /* MusicOfAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOfAccountViewController.swift; sourceTree = "<group>"; };
 		257366BA29E1CA98005BA8FF /* MusicOfAccountViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MusicOfAccountViewController.xib; sourceTree = "<group>"; };
@@ -108,7 +121,6 @@
 		25C073AA29D96ADD00B69CC1 /* CheckAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckAccountViewController.swift; sourceTree = "<group>"; };
 		25E57E4F29D3542B00246F3B /* mp3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mp3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		25E57E5229D3542B00246F3B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		25E57E5429D3542B00246F3B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		25E57E5629D3542B00246F3B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		25E57E5929D3542B00246F3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		25E57E5E29D3542D00246F3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -179,6 +191,25 @@
 			path = InfomationAccount;
 			sourceTree = "<group>";
 		};
+		2513D7EF29F057A70090C902 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				2513D7F029F0585B0090C902 /* CategoryAPI.swift */,
+				2513D7F229F1B8ED0090C902 /* MusicAPI.swift */,
+				2513D7F429F2555A0090C902 /* AccountAPI.swift */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		2513D7FE29F9B2280090C902 /* Download */ = {
+			isa = PBXGroup;
+			children = (
+				25238BE12A02FADC003EB0E5 /* DownloadViewController.swift */,
+				25238BE22A02FADC003EB0E5 /* DownloadViewController.xib */,
+			);
+			path = Download;
+			sourceTree = "<group>";
+		};
 		257366B829E1CA75005BA8FF /* MusicOfAccount */ = {
 			isa = PBXGroup;
 			children = (
@@ -209,8 +240,8 @@
 		257366C329E1D2DD005BA8FF /* DeleteMusic */ = {
 			isa = PBXGroup;
 			children = (
-				2540C75F29DBF36100C88868 /* DeleteMusicViewController.swift */,
-				2540C76029DBF36100C88868 /* DeleteMusicViewController.xib */,
+				2513D7FA29F9B1390090C902 /* DeleteViewController.swift */,
+				2513D7FB29F9B1390090C902 /* DeleteViewController.xib */,
 			);
 			path = DeleteMusic;
 			sourceTree = "<group>";
@@ -237,6 +268,8 @@
 				2540C75829DBAE2B00C88868 /* UploadTableViewCell.xib */,
 				2532AC7229DD0CFD00AAA254 /* ButtonLogOutTableViewCell.swift */,
 				2532AC7329DD0CFD00AAA254 /* ButtonLogOutTableViewCell.xib */,
+				25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */,
+				25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */,
 			);
 			path = TableViewCell;
 			sourceTree = "<group>";
@@ -301,14 +334,16 @@
 		25E57E5129D3542B00246F3B /* mp3 */ = {
 			isa = PBXGroup;
 			children = (
+				25E57E6829D354B600246F3B /* Tabbar */,
+				259A423C29D41ADE00B36268 /* CollectionView */,
+				259A423B29D41AC400B36268 /* TableViewCell */,
+				2513D7EF29F057A70090C902 /* Api */,
 				25C073A929D96AAE00B69CC1 /* CheckLogin */,
 				259A423D29D41C2D00B36268 /* Models */,
 				25E57E7529D3558600246F3B /* AccountPage */,
 				25E57E7029D3556000246F3B /* UploadPage */,
 				25E57E6929D3550300246F3B /* OnlinePage */,
-				25E57E6829D354B600246F3B /* Tabbar */,
 				25E57E5229D3542B00246F3B /* AppDelegate.swift */,
-				25E57E5429D3542B00246F3B /* SceneDelegate.swift */,
 				25E57E5629D3542B00246F3B /* ViewController.swift */,
 				25E57E5829D3542B00246F3B /* Main.storyboard */,
 				25E57E5D29D3542D00246F3B /* LaunchScreen.storyboard */,
@@ -332,8 +367,6 @@
 				257366B829E1CA75005BA8FF /* MusicOfAccount */,
 				25139E8B29D6C20000D812BE /* PlayMusic */,
 				259A425429D4ABBA00B36268 /* Listmusic */,
-				259A423C29D41ADE00B36268 /* CollectionView */,
-				259A423B29D41AC400B36268 /* TableViewCell */,
 				25E57E6C29D3553E00246F3B /* HomeViewController.swift */,
 				25E57E6D29D3553E00246F3B /* HomeViewController.xib */,
 			);
@@ -343,6 +376,7 @@
 		25E57E7029D3556000246F3B /* UploadPage */ = {
 			isa = PBXGroup;
 			children = (
+				2513D7FE29F9B2280090C902 /* Download */,
 				25E7F97429E1D3520084FBC7 /* Upload */,
 				25E7F97329E1D3400084FBC7 /* Dasborad */,
 				257366C429E1D301005BA8FF /* YourMusic */,
@@ -451,10 +485,11 @@
 			files = (
 				25765E7529D5D30C005F8A7E /* RegisterViewController.xib in Resources */,
 				2540C75A29DBAE2B00C88868 /* UploadTableViewCell.xib in Resources */,
+				25238BE42A02FADC003EB0E5 /* DownloadViewController.xib in Resources */,
 				25139E8F29D6C21700D812BE /* PlayMusicViewController.xib in Resources */,
 				2513CA2229E1D5E0004DD559 /* HomeUploadViewController.xib in Resources */,
 				25A1046D29D6254D0066089C /* OptionTableViewCell.xib in Resources */,
-				2540C76229DBF36100C88868 /* DeleteMusicViewController.xib in Resources */,
+				25238BE02A02F3CC003EB0E5 /* DownloadTableViewCell.xib in Resources */,
 				25E57E5F29D3542D00246F3B /* LaunchScreen.storyboard in Resources */,
 				259A425329D4247200B36268 /* CollectionViewCell.xib in Resources */,
 				259A424F29D423E200B36268 /* AlbumTableViewCell.xib in Resources */,
@@ -462,6 +497,7 @@
 				259A426229D5B91300B36268 /* LoginViewController.xib in Resources */,
 				2540C75629DB6C7500C88868 /* DashboardViewController.xib in Resources */,
 				25A1047129D62B1E0066089C /* InformationViewController.xib in Resources */,
+				2513D7FD29F9B1390090C902 /* DeleteViewController.xib in Resources */,
 				259A425A29D4ABE300B36268 /* ListMusicViewController.xib in Resources */,
 				257366C129E1D2A5005BA8FF /* ChangePasswordViewController.xib in Resources */,
 				257366BC29E1CA98005BA8FF /* MusicOfAccountViewController.xib in Resources */,
@@ -523,9 +559,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2513D7F129F0585B0090C902 /* CategoryAPI.swift in Sources */,
 				259A423F29D41C6300B36268 /* Category_Result.swift in Sources */,
 				25E57E6E29D3553E00246F3B /* HomeViewController.swift in Sources */,
+				25238BE32A02FADC003EB0E5 /* DownloadViewController.swift in Sources */,
 				2532AC7129DCB3B300AAA254 /* Account_Recent.swift in Sources */,
+				2513D7F329F1B8ED0090C902 /* MusicAPI.swift in Sources */,
 				257366C029E1D2A5005BA8FF /* ChangePasswordViewController.swift in Sources */,
 				257366BB29E1CA98005BA8FF /* MusicOfAccountViewController.swift in Sources */,
 				2540C75929DBAE2B00C88868 /* UploadTableViewCell.swift in Sources */,
@@ -536,18 +575,19 @@
 				2540C75529DB6C7500C88868 /* DashboardViewController.swift in Sources */,
 				259A425D29D4AC3C00B36268 /* ListMusicTableViewCell.swift in Sources */,
 				25139E8E29D6C21700D812BE /* PlayMusicViewController.swift in Sources */,
+				2513D7FC29F9B1390090C902 /* DeleteViewController.swift in Sources */,
 				2532AC7429DD0CFD00AAA254 /* ButtonLogOutTableViewCell.swift in Sources */,
 				259A424129D41EEF00B36268 /* Music_Result.swift in Sources */,
 				25E57E5729D3542B00246F3B /* ViewController.swift in Sources */,
+				2513D7F529F2555A0090C902 /* AccountAPI.swift in Sources */,
+				25238BDF2A02F3CC003EB0E5 /* DownloadTableViewCell.swift in Sources */,
 				25765E7429D5D30C005F8A7E /* RegisterViewController.swift in Sources */,
 				25E57E5329D3542B00246F3B /* AppDelegate.swift in Sources */,
 				259A424329D41F7600B36268 /* Account_Result.swift in Sources */,
-				2540C76129DBF36100C88868 /* DeleteMusicViewController.swift in Sources */,
 				259A425229D4247200B36268 /* CollectionViewCell.swift in Sources */,
 				259A426129D5B91300B36268 /* LoginViewController.swift in Sources */,
 				259A424E29D423E200B36268 /* AlbumTableViewCell.swift in Sources */,
 				25765E7129D5D0C1005F8A7E /* Result.swift in Sources */,
-				25E57E5529D3542B00246F3B /* SceneDelegate.swift in Sources */,
 				2532AC6E29DC775800AAA254 /* ListUpdateViewController.swift in Sources */,
 				2543D27B29DB003300812B9C /* YourMusicViewController.swift in Sources */,
 				25A1046C29D6254D0066089C /* OptionTableViewCell.swift in Sources */,
