@@ -13,17 +13,21 @@ struct Data{
     var path : String
     var size : Double
     var duration :String
+    var created : Date
 }
 class DownloadViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     var listData:[Data] = []
+    var newListData:[Data] = []
+    var creationDate:Date?
     deinit{
         print("Download deinit")
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         getListUrl()
+        organizeArray()
         tableView.register(UINib(nibName: "DownloadTableViewCell", bundle: nil), forCellReuseIdentifier: DownloadTableViewCell.description())
         tableView.delegate = self
         tableView.dataSource = self
@@ -36,6 +40,10 @@ class DownloadViewController: UIViewController {
         do {
             let fileURLs = try FileManager.default.contentsOfDirectory(at: mp3Path, includingPropertiesForKeys: nil)
             fileURLs.forEach { file in
+                do{
+                    let resources = try file.resourceValues(forKeys: [.creationDateKey])
+                    creationDate = resources.creationDate!
+                }catch{}
                 
                 var duration:String = ""
                 var sizeInMB :Double = 0
@@ -48,13 +56,24 @@ class DownloadViewController: UIViewController {
                     sizeInMB = value
                 }
                 
-                listData.append(Data(path: file.lastPathComponent, size: sizeInMB, duration: String(duration)))
+                listData.append(Data(path: file.lastPathComponent, size: sizeInMB, duration: String(duration), created: creationDate!))
             }
         } catch {
             print("Error while enumerating files \(mp3Path.path): \(error.localizedDescription)")
         }
     }
-    
+    func organizeArray(){
+        for i in 0..<listData.count {
+            let passes = (listData.count - 1) - i
+            for j in 0..<passes {
+                if listData[i].created > listData[j+1].created{
+                    newListData.append(listData[i])
+                    
+                }
+            }
+        }
+        print(newListData)
+    }
     func getSizeFile(file:URL,completionHandler: @escaping(Double)->Void){
         do {
             let attribute = try FileManager.default.attributesOfItem(atPath: file.path)
@@ -87,16 +106,16 @@ class DownloadViewController: UIViewController {
 }
 extension DownloadViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return listData.count
+        return newListData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: DownloadTableViewCell.description(), for: indexPath) as! DownloadTableViewCell
-        cell.lbSong.text = listData[indexPath.row].path
+        cell.lbSong.text = newListData[indexPath.row].path
         cell.lbSong.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.lbSong.numberOfLines = 0
-        cell.lbSize.text = String(format:"%.2f",listData[indexPath.row].size) + " MB"
-        cell.lbDuration.text = listData[indexPath.row].duration
+        cell.lbSize.text = String(format:"%.2f",newListData[indexPath.row].size) + " MB"
+        cell.lbDuration.text = newListData[indexPath.row].duration
         return cell
     }
     

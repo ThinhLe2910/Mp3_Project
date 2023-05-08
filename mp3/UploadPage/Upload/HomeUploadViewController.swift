@@ -30,9 +30,9 @@ class HomeUploadViewController: UIViewController {
     var delegate:Update_Res_delegate?
     var musicAPI:MusicApiService
     
+    @IBOutlet weak var btnDropDown: UIButton!
     @IBOutlet weak var btnUpdate: UIButton!
     @IBOutlet weak var lbMP3: UIButton!
-    @IBOutlet weak var txtKindOfMusic: UITextField!
     @IBOutlet weak var btnUpload: UIButton!
     @IBOutlet weak var txtNameSinger: UITextField!
     @IBOutlet weak var imgMusic: UIImageView!
@@ -64,22 +64,24 @@ class HomeUploadViewController: UIViewController {
         clickUpload.isHidden = statusUpload
         getCategory()
         getCurrentMusic()
-     
-
-        
+        buttonDropDown()
+    }
+    
+    func buttonDropDown(){
+        btnDropDown.setTitle("", for: .normal)
         dropDown.anchorView = viewdropDown
         dropDown.bottomOffset = CGPoint(x: 0, y:(dropDown.anchorView?.plainView.bounds.height)!)
         dropDown.topOffset = CGPoint(x: 0, y:-((dropDown.anchorView?.plainView.bounds.height)!))
         dropDown.direction = .bottom
-        
     }
+    
     func getCurrentMusic(){
         if (music != nil) {
             let cateogory = music?.Category
             lbTitle.text = cateogory?[0].name ??  "Choose kind of music"
             txtNameSinger.text = music?.nameSinger
             txtNameSong.text = music?.nameAlbum
-            btnUpload.setTitle(music?.file, for: .normal)
+            btnUpload.setTitle(music?.nameAlbum, for: .normal)
             newImageMusic = music?.image
             newMusic = music?.file
             self.imgMusic.sd_setImage(with: URL(string: newImageMusic), placeholderImage: UIImage(named: "placeholder.png"))

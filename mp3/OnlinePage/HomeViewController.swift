@@ -42,7 +42,7 @@ class HomeViewController: UIViewController {
         tableview.delegate = self
         tableview.dataSource = self
         tableview.refreshControl = refreshControl
-        
+        refreshControl.addTarget(self, action: #selector(loadDataApi), for: .valueChanged)
         tableview.register(UINib(nibName: "ListMusicTableViewCell", bundle: nil), forCellReuseIdentifier: ListMusicTableViewCell.description())
         tableview.register(UINib(nibName: "AlbumTableViewCell", bundle: nil), forCellReuseIdentifier: AlbumTableViewCell.description())
         addingSearchController()
@@ -52,8 +52,11 @@ class HomeViewController: UIViewController {
     }
     
     @objc func loadDataApi(){
-        getCategory()
-        getMusic()
+        DispatchQueue.main.async {
+            self.getCategory()
+            self.getMusic()
+            self.refreshControl.endRefreshing()
+        }
     }
     
     func addingSearchController(){

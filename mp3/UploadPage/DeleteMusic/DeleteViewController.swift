@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import SDWebImage
 class DeleteViewController: UIViewController {
     var arrMusic: Array<MusicInfor> = []
     var token:String!
@@ -63,6 +63,7 @@ extension DeleteViewController : UITableViewDelegate,UITableViewDataSource{
         cell.labelNameMusic.numberOfLines = 0
         cell.labelNameSinger.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.labelNameSinger.numberOfLines = 0
+        cell.images.sd_setImage(with: URL(string: arrMusic[indexPath.row].image), placeholderImage: UIImage(named: "placeholder.png"))
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

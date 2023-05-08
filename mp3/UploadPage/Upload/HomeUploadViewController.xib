@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -10,6 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HomeUploadViewController" customModule="mp3" customModuleProvider="target">
             <connections>
+                <outlet property="btnDropDown" destination="YUw-Ia-DWR" id="O2p-8f-330"/>
                 <outlet property="btnUpdate" destination="fsj-2G-DSc" id="LU2-kz-kF6"/>
                 <outlet property="btnUpload" destination="7XJ-ZO-1hs" id="uP8-fr-guy"/>
                 <outlet property="clickUpload" destination="T3v-f2-OFS" id="hvC-od-Y11"/>
@@ -28,41 +30,41 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MP3 :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gda-Os-fr8">
-                    <rect key="frame" x="10" y="333" width="52" height="24"/>
+                    <rect key="frame" x="10" y="318" width="52" height="24"/>
                     <fontDescription key="fontDescription" type="italicSystem" pointSize="20"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kind of music :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z5U-G2-JSY">
-                    <rect key="frame" x="10" y="402" width="130" height="24"/>
+                    <rect key="frame" x="10" y="387" width="130" height="24"/>
                     <fontDescription key="fontDescription" type="italicSystem" pointSize="20"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name's Song :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E72-g8-fAM">
-                    <rect key="frame" x="10" y="470" width="127" height="24"/>
+                    <rect key="frame" x="10" y="455" width="127" height="24"/>
                     <fontDescription key="fontDescription" type="italicSystem" pointSize="20"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="458-8w-EL9">
-                    <rect key="frame" x="20" y="499" width="353" height="34"/>
+                    <rect key="frame" x="20" y="484" width="353" height="34"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name's Singer :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZM0-fg-UCC">
-                    <rect key="frame" x="10" y="538" width="138" height="24"/>
+                    <rect key="frame" x="10" y="523" width="138" height="24"/>
                     <fontDescription key="fontDescription" type="italicSystem" pointSize="20"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xNz-bb-GaS">
-                    <rect key="frame" x="20" y="567" width="353" height="34"/>
+                    <rect key="frame" x="20" y="552" width="353" height="34"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T3v-f2-OFS">
-                    <rect key="frame" x="20" y="621" width="353" height="35"/>
+                    <rect key="frame" x="20" y="606" width="353" height="35"/>
                     <state key="normal" title="Button"/>
                     <buttonConfiguration key="configuration" style="filled" title="Upload"/>
                     <connections>
@@ -70,7 +72,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="characterWrap" translatesAutoresizingMaskIntoConstraints="NO" id="7XJ-ZO-1hs">
-                    <rect key="frame" x="20" y="362" width="353" height="35"/>
+                    <rect key="frame" x="20" y="347" width="353" height="35"/>
                     <color key="backgroundColor" systemColor="systemGray5Color"/>
                     <state key="normal" title="Button"/>
                     <buttonConfiguration key="configuration" style="plain" title="Choose Auido"/>
@@ -79,7 +81,7 @@
                     </connections>
                 </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Axo-eu-pcQ">
-                    <rect key="frame" x="20" y="431" width="353" height="34"/>
+                    <rect key="frame" x="20" y="416" width="353" height="34"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose Kind of music" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="geM-4T-cGG">
                             <rect key="frame" x="8" y="8" width="337" height="18"/>
@@ -109,7 +111,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fsj-2G-DSc">
-                    <rect key="frame" x="20" y="671" width="353" height="35"/>
+                    <rect key="frame" x="20" y="656" width="353" height="35"/>
                     <state key="normal" title="Button"/>
                     <buttonConfiguration key="configuration" style="filled" title="Update"/>
                     <connections>
@@ -123,7 +125,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gallery" translatesAutoresizingMaskIntoConstraints="NO" id="5HP-E4-Okf">
-                    <rect key="frame" x="90" y="211" width="230" height="119"/>
+                    <rect key="frame" x="90" y="208" width="230" height="119"/>
                     <color key="backgroundColor" systemColor="systemGray5Color"/>
                     <gestureRecognizers/>
                     <constraints>
@@ -145,7 +147,7 @@
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="gda-Os-fr8" firstAttribute="top" secondItem="Zzd-1v-wmN" secondAttribute="bottom" constant="130" id="1BW-FU-zOL"/>
+                <constraint firstItem="gda-Os-fr8" firstAttribute="top" secondItem="Zzd-1v-wmN" secondAttribute="bottom" constant="115" id="1BW-FU-zOL"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="5HP-E4-Okf" secondAttribute="trailing" constant="73" id="4uv-65-xXe"/>
                 <constraint firstItem="Axo-eu-pcQ" firstAttribute="top" secondItem="Z5U-G2-JSY" secondAttribute="bottom" constant="5" id="5GB-bJ-MQZ"/>
                 <constraint firstItem="ZM0-fg-UCC" firstAttribute="top" secondItem="458-8w-EL9" secondAttribute="bottom" constant="5" id="6AP-AC-V4y"/>
@@ -169,7 +171,7 @@
                 <constraint firstItem="ZM0-fg-UCC" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="10" id="iGb-9d-0pw"/>
                 <constraint firstItem="T3v-f2-OFS" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="iU8-WJ-B2W"/>
                 <constraint firstItem="458-8w-EL9" firstAttribute="top" secondItem="E72-g8-fAM" secondAttribute="bottom" constant="5" id="irq-vw-z6S"/>
-                <constraint firstItem="5HP-E4-Okf" firstAttribute="top" secondItem="Zzd-1v-wmN" secondAttribute="bottom" constant="8" id="o8p-8I-FiW"/>
+                <constraint firstItem="5HP-E4-Okf" firstAttribute="top" secondItem="Zzd-1v-wmN" secondAttribute="bottom" constant="5" id="o8p-8I-FiW"/>
                 <constraint firstItem="458-8w-EL9" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="or5-98-58z"/>
                 <constraint firstItem="5HP-E4-Okf" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="90" id="q1Y-xv-YxS"/>
                 <constraint firstItem="Zzd-1v-wmN" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="10" id="s74-wg-ezh"/>

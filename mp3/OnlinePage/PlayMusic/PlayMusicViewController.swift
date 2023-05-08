@@ -10,6 +10,9 @@ import AVFoundation
 import AVFAudio
 import SDWebImage
 class PlayMusicViewController: UIViewController {
+    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var lbSinger: UILabel!
+    @IBOutlet weak var btnNext: UIButton!
     var download = false;
     var timer : Timer? {
         didSet{
@@ -52,14 +55,10 @@ class PlayMusicViewController: UIViewController {
         super.viewDidLoad()
         getMusic()
         getArrayMusic()
+        buttonPlayMusic()
+        imgMusic()
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime), name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
         slider.isContinuous = true
-
-        imgview.layer.borderWidth = 1
-        imgview.layer.masksToBounds = false
-        imgview.layer.borderColor = UIColor.black.cgColor
-        imgview.layer.cornerRadius = imgview.frame.height/2
-        imgview.clipsToBounds = true
         
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -71,6 +70,19 @@ class PlayMusicViewController: UIViewController {
         btnPlay.setImage(UIImage(named: "play"), for: .normal)
         player?.pause()
         NotificationCenter.default.removeObserver(self)
+    }
+    func buttonPlayMusic(){
+        buttonDownload.setImage(UIImage(named: "download-4"), for: .normal)
+        buttonDownload.setTitle("", for: .normal)
+        btnPlay.setTitle("", for: .normal)
+        btnBack.setTitle("", for: .normal)
+        btnNext.setTitle("", for: .normal)
+    }
+    func imgMusic(){
+        imgview.layer.borderWidth = 1
+        imgview.layer.borderColor = UIColor.black.cgColor
+        imgview.layer.cornerRadius = imgview.frame.size.width/2
+        imgview.clipsToBounds = true
     }
     @IBAction func playButtonTapped(_ sender: Any) {
         if player!.rate == 0 {
@@ -121,7 +133,7 @@ class PlayMusicViewController: UIViewController {
     }
     @IBAction func btnBackMusic(_ sender: Any) {
         currentTime.text = "00:00"
-        if(player?.rate == 0 ){
+        if(player?.rate != 0 ){
             indexPlay -= 1
             if indexPlay < 0{
                 indexPlay = arrayRecent.count - 1
@@ -154,7 +166,7 @@ class PlayMusicViewController: UIViewController {
             }
         }
     }
- 
+    
     @objc func updateSlider() {
         if player != nil {
             let currentTimeBySecond = CMTimeGetSeconds((player!.currentTime()))
@@ -169,8 +181,7 @@ class PlayMusicViewController: UIViewController {
             self.arrayMusic = value.data
             let indexOfMusic = self.arrayMusic.firstIndex(where: { $0._id == self.music._id })
             self.arrayRecent.append(indexOfMusic!)
-            for _ in 1...20 {
-                let index = Int.random(in: 0..<self.arrayMusic.count)
+            for index in 0...self.arrayMusic.count - 1 {
                 self.arrayRecent.append(index)
             }
         })
@@ -188,8 +199,10 @@ class PlayMusicViewController: UIViewController {
         getImage(music: music)
         let ex = (music.file!)
         let newString = ex.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-        lbInfor.text = music.nameAlbum + " - " + music.nameSinger!
+        lbInfor.text = music.nameAlbum
+        lbSinger.text = music.nameSinger!
         let url1 = URL(string: newString)
+        
         timerSlider = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateSlider), userInfo: nil, repeats: true)
         player = AVPlayer(url: url1!)
         getDuarationAndCurrent(player: player!)
@@ -290,7 +303,7 @@ class PlayMusicViewController: UIViewController {
             action.addAction(cancel)
             action.addAction(download)
             self.present(action, animated: true)
-
+            
         }
     }
     func timerImage(){
@@ -298,11 +311,11 @@ class PlayMusicViewController: UIViewController {
             self?.i += 1
             self?.imgview.transform = CGAffineTransform(rotationAngle: CGFloat(Double(self!.i) * Double.pi/180))
         })
-
+        
     }
     func getImage(music:MusicInfor){
         self.imgview.sd_setImage(with: URL(string: music.image), placeholderImage: UIImage(named: "placeholder.png"))
     }
 }
-    
-    
+
+
