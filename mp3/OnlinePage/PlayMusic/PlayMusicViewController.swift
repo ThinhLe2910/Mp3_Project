@@ -266,7 +266,7 @@ class PlayMusicViewController: UIViewController {
             let action = UIAlertController(title: "Notification", message: "Do you want to download?", preferredStyle: .actionSheet)
             let download = UIAlertAction(title: "Download File", style: .default) { e in
                 let newString = self.music.file!.replacingOccurrences(of: " ", with: "%20", options: .literal, range: nil)
-                if let audioUrl = URL(string: "http://localhost:3000/upload/music/" + newString){
+                if let audioUrl = URL(string: newString){
                     // then lets create your document folder url
                     let documentsDirectoryURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                     // lets create your destination file url

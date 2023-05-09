@@ -11,6 +11,7 @@ class YourMusicViewController: UIViewController {
     var arrMusic: Array<MusicInfor> = []
     var clickSw = UISwitch(frame: .zero)
     var token:String!
+   
     @IBOutlet weak var tableView: UITableView!
     var musicAPI: MusicApiService
     init(musicAPI: MusicApiService) {
@@ -28,6 +29,7 @@ class YourMusicViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         token = UserDefaults.standard.string(forKey: "token")!
+        
         getMusic()
         tableView.register(UINib(nibName: "ListMusicTableViewCell", bundle: nil), forCellReuseIdentifier: ListMusicTableViewCell.description())
         tableView.delegate = self

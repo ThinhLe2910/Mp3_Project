@@ -1,18 +1,15 @@
 //
-//  DownloadTableViewCell.swift
+//  TitleTableViewCell.swift
 //  mp3
 //
-//  Created by Thinh on 04/05/2023.
+//  Created by Thinh on 10/05/2023.
 //
 
 import UIKit
 
-class DownloadTableViewCell: UITableViewCell {
+class TitleTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var lbCreated: UILabel!
-    @IBOutlet weak var lbDuration: UILabel!
-    @IBOutlet weak var lbSize: UILabel!
-    @IBOutlet weak var lbSong: UILabel!
+    @IBOutlet weak var lbTitle: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

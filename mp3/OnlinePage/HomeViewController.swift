@@ -45,6 +45,7 @@ class HomeViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(loadDataApi), for: .valueChanged)
         tableview.register(UINib(nibName: "ListMusicTableViewCell", bundle: nil), forCellReuseIdentifier: ListMusicTableViewCell.description())
         tableview.register(UINib(nibName: "AlbumTableViewCell", bundle: nil), forCellReuseIdentifier: AlbumTableViewCell.description())
+        tableview.register(UINib(nibName: "TitleTableViewCell", bundle: nil), forCellReuseIdentifier: TitleTableViewCell.description())
         addingSearchController()
         getCategory()
         getMusic()
@@ -134,8 +135,8 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
             }
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: AlbumTableViewCell.description(), for: indexPath) as! AlbumTableViewCell
-            cell.labelTitle.text = "New Tracks"
+            let cell = tableView.dequeueReusableCell(withIdentifier: TitleTableViewCell.description(), for: indexPath) as! TitleTableViewCell
+            cell.lbTitle.text = "New Tracks"
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier:  ListMusicTableViewCell.description(), for: indexPath) as! ListMusicTableViewCell

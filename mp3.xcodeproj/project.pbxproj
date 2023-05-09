@@ -56,6 +56,8 @@
 		25A1046D29D6254D0066089C /* OptionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25A1046B29D6254D0066089C /* OptionTableViewCell.xib */; };
 		25A1047029D62B1E0066089C /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A1046E29D62B1E0066089C /* InformationViewController.swift */; };
 		25A1047129D62B1E0066089C /* InformationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25A1046F29D62B1E0066089C /* InformationViewController.xib */; };
+		25B378FA2A0AF73600C13ADB /* TitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B378F82A0AF73600C13ADB /* TitleTableViewCell.swift */; };
+		25B378FB2A0AF73600C13ADB /* TitleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25B378F92A0AF73600C13ADB /* TitleTableViewCell.xib */; };
 		25C073AB29D96ADD00B69CC1 /* CheckAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C073AA29D96ADD00B69CC1 /* CheckAccountViewController.swift */; };
 		25E57E5329D3542B00246F3B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E57E5229D3542B00246F3B /* AppDelegate.swift */; };
 		25E57E5729D3542B00246F3B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E57E5629D3542B00246F3B /* ViewController.swift */; };
@@ -118,6 +120,8 @@
 		25A1046B29D6254D0066089C /* OptionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OptionTableViewCell.xib; sourceTree = "<group>"; };
 		25A1046E29D62B1E0066089C /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		25A1046F29D62B1E0066089C /* InformationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InformationViewController.xib; sourceTree = "<group>"; };
+		25B378F82A0AF73600C13ADB /* TitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTableViewCell.swift; sourceTree = "<group>"; };
+		25B378F92A0AF73600C13ADB /* TitleTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleTableViewCell.xib; sourceTree = "<group>"; };
 		25C073AA29D96ADD00B69CC1 /* CheckAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckAccountViewController.swift; sourceTree = "<group>"; };
 		25E57E4F29D3542B00246F3B /* mp3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mp3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		25E57E5229D3542B00246F3B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -270,6 +274,8 @@
 				2532AC7329DD0CFD00AAA254 /* ButtonLogOutTableViewCell.xib */,
 				25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */,
 				25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */,
+				25B378F82A0AF73600C13ADB /* TitleTableViewCell.swift */,
+				25B378F92A0AF73600C13ADB /* TitleTableViewCell.xib */,
 			);
 			path = TableViewCell;
 			sourceTree = "<group>";
@@ -503,6 +509,7 @@
 				257366BC29E1CA98005BA8FF /* MusicOfAccountViewController.xib in Resources */,
 				2532AC6F29DC775800AAA254 /* ListUpdateViewController.xib in Resources */,
 				2513CA2429E1D5EB004DD559 /* YourMusicViewController.xib in Resources */,
+				25B378FB2A0AF73600C13ADB /* TitleTableViewCell.xib in Resources */,
 				25E57E6F29D3553E00246F3B /* HomeViewController.xib in Resources */,
 				25139E9129D6C91D00D812BE /* Assets.xcassets in Resources */,
 				259A425E29D4AC3C00B36268 /* ListMusicTableViewCell.xib in Resources */,
@@ -559,6 +566,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25B378FA2A0AF73600C13ADB /* TitleTableViewCell.swift in Sources */,
 				2513D7F129F0585B0090C902 /* CategoryAPI.swift in Sources */,
 				259A423F29D41C6300B36268 /* Category_Result.swift in Sources */,
 				25E57E6E29D3553E00246F3B /* HomeViewController.swift in Sources */,
