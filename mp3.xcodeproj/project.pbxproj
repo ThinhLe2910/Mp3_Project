@@ -19,6 +19,7 @@
 		2513D7FD29F9B1390090C902 /* DeleteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2513D7FB29F9B1390090C902 /* DeleteViewController.xib */; };
 		252111C62A0BC8B800C3A24D /* Recent_Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252111C52A0BC8B800C3A24D /* Recent_Result.swift */; };
 		252111C82A0CD73800C3A24D /* RecentAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252111C72A0CD73800C3A24D /* RecentAPI.swift */; };
+		252111CA2A0D9CA300C3A24D /* Data_Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252111C92A0D9CA300C3A24D /* Data_Download.swift */; };
 		25238BDF2A02F3CC003EB0E5 /* DownloadTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */; };
 		25238BE02A02F3CC003EB0E5 /* DownloadTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */; };
 		25238BE32A02FADC003EB0E5 /* DownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25238BE12A02FADC003EB0E5 /* DownloadViewController.swift */; };
@@ -84,6 +85,7 @@
 		2513D7FB29F9B1390090C902 /* DeleteViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteViewController.xib; sourceTree = "<group>"; };
 		252111C52A0BC8B800C3A24D /* Recent_Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recent_Result.swift; sourceTree = "<group>"; };
 		252111C72A0CD73800C3A24D /* RecentAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentAPI.swift; sourceTree = "<group>"; };
+		252111C92A0D9CA300C3A24D /* Data_Download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data_Download.swift; sourceTree = "<group>"; };
 		25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTableViewCell.swift; sourceTree = "<group>"; };
 		25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DownloadTableViewCell.xib; sourceTree = "<group>"; };
 		25238BE12A02FADC003EB0E5 /* DownloadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadViewController.swift; sourceTree = "<group>"; };
@@ -301,6 +303,7 @@
 				25765E7029D5D0C1005F8A7E /* Result.swift */,
 				2540C75B29DBB8B200C88868 /* Section.swift */,
 				252111C52A0BC8B800C3A24D /* Recent_Result.swift */,
+				252111C92A0D9CA300C3A24D /* Data_Download.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -603,6 +606,7 @@
 				2543D27B29DB003300812B9C /* YourMusicViewController.swift in Sources */,
 				25A1046C29D6254D0066089C /* OptionTableViewCell.swift in Sources */,
 				252111C62A0BC8B800C3A24D /* Recent_Result.swift in Sources */,
+				252111CA2A0D9CA300C3A24D /* Data_Download.swift in Sources */,
 				25A1047029D62B1E0066089C /* InformationViewController.swift in Sources */,
 				25C073AB29D96ADD00B69CC1 /* CheckAccountViewController.swift in Sources */,
 			);

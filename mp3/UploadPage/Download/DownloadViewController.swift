@@ -9,16 +9,10 @@ import UIKit
 import Foundation
 import AVFoundation
 
-struct Data{
-    var path : String
-    var size : Double
-    var duration :String
-    var created : String
-}
 class DownloadViewController: UIViewController {
     var dateFormatter:DateFormatter?
     @IBOutlet weak var tableView: UITableView!
-    var listData:[Data] = []
+    var listData:[Data_Download] = []
     var date:String?
     deinit{
         print("Download deinit")
@@ -27,7 +21,6 @@ class DownloadViewController: UIViewController {
         super.viewDidLoad()
         dateFormatter = DateFormatter()
         getListUrl()
-        organizeArray()
         tableView.register(UINib(nibName: "DownloadTableViewCell", bundle: nil), forCellReuseIdentifier: DownloadTableViewCell.description())
         tableView.delegate = self
         tableView.dataSource = self
@@ -42,44 +35,40 @@ class DownloadViewController: UIViewController {
 
         do {
             let fileURLs = try FileManager.default.contentsOfDirectory(at: mp3Path, includingPropertiesForKeys: nil)
-            fileURLs.forEach { file in
-                do{
-                    let resources = try file.resourceValues(forKeys: [.creationDateKey])
-                    let creationDate = resources.creationDate!
-                    dateFormatter?.dateFormat = "MM/dd/yyyy HH:mm"
-                    date = dateFormatter!.string(from: creationDate )
-                }catch{}
-                guard let date = date else{
-                    return
-                }
-                var duration:String = ""
-                var sizeInMB :Double = 0
-                
-                getDurationTime(file: file) { value in
-                    duration = value
-                }
-                
-                getSizeFile(file: file) { value in
-                    sizeInMB = value
-                }
-                
-                listData.append(Data(path: file.lastPathComponent, size: sizeInMB, duration: String(duration), created: date))
+            getListData(fileUrls: fileURLs) {[weak self] value in
+                self?.listData = value
             }
         } catch {
             print("Error while enumerating files \(mp3Path.path): \(error.localizedDescription)")
         }
     }
-    func organizeArray(){
-        var a:Data?
-        for _ in 0..<listData.count {
-            for j in 0..<listData.count-1{
-                if listData[j].created < listData[j+1].created{
-                    a = listData[j]
-                    listData[j] = listData[j+1]
-                    listData[j+1] = a!
-                }
+    func getListData(fileUrls:[URL],completionHandler: @escaping ([Data_Download]) -> Void){
+        var datas:[Data_Download]=[]
+        fileUrls.forEach { file in
+            do{
+                let resources = try file.resourceValues(forKeys: [.creationDateKey])
+                let creationDate = resources.creationDate!
+                dateFormatter?.dateFormat = "MM/dd/yyyy HH:mm"
+                date = dateFormatter!.string(from: creationDate )
+            }catch{}
+            guard let date = date else{
+                return
             }
+            var duration:String = ""
+            var sizeInMB :Double = 0
+            
+            getDurationTime(file: file) { value in
+                duration = value
+            }
+            
+            getSizeFile(file: file) { value in
+                sizeInMB = value
+            }
+            
+            datas.append(Data_Download(path: file.lastPathComponent, size: sizeInMB, duration: String(duration), created: date))
         }
+        let sortData = datas.sorted { $0.created > $1.created }
+        completionHandler(sortData)
     }
     func getSizeFile(file:URL,completionHandler: @escaping(Double)->Void){
         do {
