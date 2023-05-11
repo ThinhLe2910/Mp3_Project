@@ -12,7 +12,9 @@ class MusicOfAccountViewController: UIViewController {
     @IBOutlet weak var lbName: UILabel!
     @IBOutlet weak var imgView: UIImageView!
     var musicAPI:MusicApiService
-    init(musicAPI: MusicApiService) {
+    var recentAPI:RecentApiService
+    init(musicAPI: MusicApiService,recentAPI:RecentApiService) {
+        self.recentAPI = recentAPI
         self.musicAPI = musicAPI
         super.init(nibName: "MusicOfAccountViewController", bundle: nil)
     }
@@ -75,7 +77,7 @@ extension MusicOfAccountViewController:UITableViewDelegate,UITableViewDataSource
         playMusic.music = arrMusic[indexPath.row]
         if let token = UserDefaults.standard.string(forKey: "token") {
             let id = arrMusic[indexPath.row]._id
-            musicAPI.addRecent(token: token, id: id, completionHandler: { [weak self] value in
+            recentAPI.addRecent(token: token, idMusic: id, completionHandler: { [weak self] value in
                 guard let self = self else{
                     return
                 }

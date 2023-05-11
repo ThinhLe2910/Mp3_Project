@@ -8,21 +8,20 @@ import UIKit
 import SDWebImage
 struct ListRecent{
     var open :Bool
-    var data: [MusicInfor]
+    var data: [DataRecent]
 }
 class DashboardViewController: UIViewController {
     var newImage:String!
     var list : [Section]!
-    var arr : DataRecent!
-    var recent:[MusicInfor]=[]
     var token : String!
     var listRecent : ListRecent?
     @IBOutlet weak var avatarView: UIImageView!
     @IBOutlet weak var tableView: UITableView!
-    
+    var recentApi:RecentApiService
     var accountAPI:AccountAPIService
-    init(accountAPI: AccountAPIService) {
+    init(accountAPI: AccountAPIService,recentApi:RecentApiService) {
         self.accountAPI = accountAPI
+        self.recentApi = recentApi
         super.init(nibName: "DashboardViewController", bundle: nil)
     }
     
@@ -43,7 +42,6 @@ class DashboardViewController: UIViewController {
         avatarView.layer.borderWidth = 2
         avatarView.layer.borderColor = UIColor.lightGray.cgColor
         getMusic()
-        
         list = [
             Section(
                 open:false,
@@ -74,9 +72,7 @@ class DashboardViewController: UIViewController {
             ),
             
         ]
-        
-        
-        
+    
         // Do any additional setup after loading the view.
         tableView.register(UINib(nibName: "UploadTableViewCell", bundle: nil), forCellReuseIdentifier: UploadTableViewCell.description())
         tableView.register(UINib(nibName: "ListMusicTableViewCell", bundle: nil), forCellReuseIdentifier: ListMusicTableViewCell.description())
@@ -114,18 +110,17 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
         }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         switch indexPath.section {
         case 0 :
             let cell = tableView.dequeueReusableCell(withIdentifier: ListMusicTableViewCell.description(), for: indexPath) as! ListMusicTableViewCell
-            cell.buttonPostBy.setTitle("Post By : " + arr.name,for: .normal)
-            cell.labelNameSinger.text = recent[indexPath.row].nameSinger
+            cell.buttonPostBy.setTitle("Post By : " + listRecent!.data[indexPath.row].Account[0].name,for: .normal)
+            cell.labelNameSinger.text = listRecent!.data[indexPath.row].listrecent![0].nameSinger
             cell.labelNameMusic.lineBreakMode = NSLineBreakMode.byWordWrapping
             cell.labelNameMusic.numberOfLines = 0
             cell.labelNameSinger.lineBreakMode = NSLineBreakMode.byWordWrapping
             cell.labelNameSinger.numberOfLines = 0
-            cell.labelNameMusic.text = recent[indexPath.row].nameAlbum
-            cell.images.sd_setImage(with: URL(string: self.recent[indexPath.row].image), placeholderImage: UIImage(named: "placeholder.png"))
+            cell.labelNameMusic.text = listRecent!.data[indexPath.row].listrecent![0].nameAlbum
+            cell.images.sd_setImage(with: URL(string: listRecent!.data[indexPath.row].listrecent![0].image), placeholderImage: UIImage(named: "placeholder.png"))
                     
             cell.backgroundColor =
             #colorLiteral(red: 0.8884527683, green: 0.9174801707, blue: 0.9368647933, alpha: 1)
@@ -235,8 +230,10 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
         switch indexPath.section {
         case 0 :
             let playmusicVC = PlayMusicViewController(musicAPI: musicAPI)
-            playmusicVC.music = recent[indexPath.row]
-            self.navigationController?.pushViewController(playmusicVC, animated: true)
+            playmusicVC.music = listRecent!.data[indexPath.row].listrecent![0]
+            DispatchQueue.main.async {
+                self.present(playmusicVC, animated: true)
+            }
         case 1:
             switch indexPath.row{
             case 0 :
@@ -265,16 +262,15 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
     }
     
     func getMusic(){
-        accountAPI.getRecentAccount(token: token, completionHandler: { [weak self] value in
+        recentApi.getRecentAccount(token: token, completionHandler: { [weak self] value in
             guard let self = self else{
                 return
             }
             if(value.result == 1){
-                self.arr = value.data[0]
-                self.recent = self.arr.listrecent!
-                self.listRecent?.data = self.arr.listrecent!
+                self.listRecent?.data = value.data
                         DispatchQueue.main.async {
-                            self.avatarView.sd_setImage(with: URL(string: self.arr.avatarImage), placeholderImage: UIImage(named: "placeholder.png"))
+                            self.avatarView.sd_setImage(with: URL(string: value.data[0].Account[0].avatarImage), placeholderImage: UIImage(named: "placeholder.png"))
+                            self.tableView.reloadData()
                         }
                 }
         })
@@ -291,7 +287,7 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
             if(value.result==1){
                 DispatchQueue.main.async {
                     UserDefaults.standard.removeObject(forKey: "token")
-                    self.navigationController?.pushViewController(LoginViewController(accountAPI: self.accountAPI), animated: false)
+                    self.navigationController?.pushViewController(LoginViewController(accountAPI: self.accountAPI, recentAPI: self.recentApi), animated: false)
                 }
             }
         })

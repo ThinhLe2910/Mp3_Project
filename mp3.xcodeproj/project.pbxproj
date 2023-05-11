@@ -17,13 +17,14 @@
 		2513D7F529F2555A0090C902 /* AccountAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2513D7F429F2555A0090C902 /* AccountAPI.swift */; };
 		2513D7FC29F9B1390090C902 /* DeleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2513D7FA29F9B1390090C902 /* DeleteViewController.swift */; };
 		2513D7FD29F9B1390090C902 /* DeleteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2513D7FB29F9B1390090C902 /* DeleteViewController.xib */; };
+		252111C62A0BC8B800C3A24D /* Recent_Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252111C52A0BC8B800C3A24D /* Recent_Result.swift */; };
+		252111C82A0CD73800C3A24D /* RecentAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252111C72A0CD73800C3A24D /* RecentAPI.swift */; };
 		25238BDF2A02F3CC003EB0E5 /* DownloadTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */; };
 		25238BE02A02F3CC003EB0E5 /* DownloadTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */; };
 		25238BE32A02FADC003EB0E5 /* DownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25238BE12A02FADC003EB0E5 /* DownloadViewController.swift */; };
 		25238BE42A02FADC003EB0E5 /* DownloadViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 25238BE22A02FADC003EB0E5 /* DownloadViewController.xib */; };
 		2532AC6E29DC775800AAA254 /* ListUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2532AC6C29DC775800AAA254 /* ListUpdateViewController.swift */; };
 		2532AC6F29DC775800AAA254 /* ListUpdateViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2532AC6D29DC775800AAA254 /* ListUpdateViewController.xib */; };
-		2532AC7129DCB3B300AAA254 /* Account_Recent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2532AC7029DCB3B300AAA254 /* Account_Recent.swift */; };
 		2532AC7429DD0CFD00AAA254 /* ButtonLogOutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2532AC7229DD0CFD00AAA254 /* ButtonLogOutTableViewCell.swift */; };
 		2532AC7529DD0CFD00AAA254 /* ButtonLogOutTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2532AC7329DD0CFD00AAA254 /* ButtonLogOutTableViewCell.xib */; };
 		2540C75529DB6C7500C88868 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2540C75329DB6C7500C88868 /* DashboardViewController.swift */; };
@@ -81,13 +82,14 @@
 		2513D7F429F2555A0090C902 /* AccountAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAPI.swift; sourceTree = "<group>"; };
 		2513D7FA29F9B1390090C902 /* DeleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteViewController.swift; sourceTree = "<group>"; };
 		2513D7FB29F9B1390090C902 /* DeleteViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteViewController.xib; sourceTree = "<group>"; };
+		252111C52A0BC8B800C3A24D /* Recent_Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recent_Result.swift; sourceTree = "<group>"; };
+		252111C72A0CD73800C3A24D /* RecentAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentAPI.swift; sourceTree = "<group>"; };
 		25238BDD2A02F3CC003EB0E5 /* DownloadTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTableViewCell.swift; sourceTree = "<group>"; };
 		25238BDE2A02F3CC003EB0E5 /* DownloadTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DownloadTableViewCell.xib; sourceTree = "<group>"; };
 		25238BE12A02FADC003EB0E5 /* DownloadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadViewController.swift; sourceTree = "<group>"; };
 		25238BE22A02FADC003EB0E5 /* DownloadViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DownloadViewController.xib; sourceTree = "<group>"; };
 		2532AC6C29DC775800AAA254 /* ListUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListUpdateViewController.swift; sourceTree = "<group>"; };
 		2532AC6D29DC775800AAA254 /* ListUpdateViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListUpdateViewController.xib; sourceTree = "<group>"; };
-		2532AC7029DCB3B300AAA254 /* Account_Recent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account_Recent.swift; sourceTree = "<group>"; };
 		2532AC7229DD0CFD00AAA254 /* ButtonLogOutTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLogOutTableViewCell.swift; sourceTree = "<group>"; };
 		2532AC7329DD0CFD00AAA254 /* ButtonLogOutTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ButtonLogOutTableViewCell.xib; sourceTree = "<group>"; };
 		2540C75329DB6C7500C88868 /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 				2513D7F029F0585B0090C902 /* CategoryAPI.swift */,
 				2513D7F229F1B8ED0090C902 /* MusicAPI.swift */,
 				2513D7F429F2555A0090C902 /* AccountAPI.swift */,
+				252111C72A0CD73800C3A24D /* RecentAPI.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -297,7 +300,7 @@
 				259A424229D41F7600B36268 /* Account_Result.swift */,
 				25765E7029D5D0C1005F8A7E /* Result.swift */,
 				2540C75B29DBB8B200C88868 /* Section.swift */,
-				2532AC7029DCB3B300AAA254 /* Account_Recent.swift */,
+				252111C52A0BC8B800C3A24D /* Recent_Result.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -571,7 +574,6 @@
 				259A423F29D41C6300B36268 /* Category_Result.swift in Sources */,
 				25E57E6E29D3553E00246F3B /* HomeViewController.swift in Sources */,
 				25238BE32A02FADC003EB0E5 /* DownloadViewController.swift in Sources */,
-				2532AC7129DCB3B300AAA254 /* Account_Recent.swift in Sources */,
 				2513D7F329F1B8ED0090C902 /* MusicAPI.swift in Sources */,
 				257366C029E1D2A5005BA8FF /* ChangePasswordViewController.swift in Sources */,
 				257366BB29E1CA98005BA8FF /* MusicOfAccountViewController.swift in Sources */,
@@ -588,6 +590,7 @@
 				259A424129D41EEF00B36268 /* Music_Result.swift in Sources */,
 				25E57E5729D3542B00246F3B /* ViewController.swift in Sources */,
 				2513D7F529F2555A0090C902 /* AccountAPI.swift in Sources */,
+				252111C82A0CD73800C3A24D /* RecentAPI.swift in Sources */,
 				25238BDF2A02F3CC003EB0E5 /* DownloadTableViewCell.swift in Sources */,
 				25765E7429D5D30C005F8A7E /* RegisterViewController.swift in Sources */,
 				25E57E5329D3542B00246F3B /* AppDelegate.swift in Sources */,
@@ -599,6 +602,7 @@
 				2532AC6E29DC775800AAA254 /* ListUpdateViewController.swift in Sources */,
 				2543D27B29DB003300812B9C /* YourMusicViewController.swift in Sources */,
 				25A1046C29D6254D0066089C /* OptionTableViewCell.swift in Sources */,
+				252111C62A0BC8B800C3A24D /* Recent_Result.swift in Sources */,
 				25A1047029D62B1E0066089C /* InformationViewController.swift in Sources */,
 				25C073AB29D96ADD00B69CC1 /* CheckAccountViewController.swift in Sources */,
 			);

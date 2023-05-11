@@ -15,7 +15,6 @@ protocol AccountAPIService{
     func updateAccount(token:String,username:String,email:String,name:String,completionHandler: @escaping(Result)->Void)
     func uploadImg(url:URL,completionHandler: @escaping(Result)->Void)
     func saveImg(token: String,avatarImage: String)
-    func getRecentAccount(token: String,completionHandler: @escaping(Account_Recent)->Void)
     func logout(token: String,completionHandler: @escaping(Result)->Void)
     func changePassword(token:String,newpass:String,current:String,comfirm:String,completionHandler: @escaping(Result)->Void)
 }
@@ -120,22 +119,6 @@ class AccountApi:AccountAPIService{
             do {
                 let decoder = JSONDecoder()
                 let _ = try decoder.decode(Result.self, from: data)
-            } catch let error {
-                print(error)
-            }
-        }
-    }
-    func getRecentAccount(token: String,completionHandler: @escaping(Account_Recent)->Void){
-        let parameters: Parameters=[
-                    "token":token,
-                ]
-        AF.request("http://localhost:3000/get/recent",method: .post,parameters: parameters).response{
-            response in
-            guard let data = response.data else { return }
-            do {
-                let decoder = JSONDecoder()
-                let dataInfo = try decoder.decode(Account_Recent.self, from: data)
-                completionHandler(dataInfo)
             } catch let error {
                 print(error)
             }

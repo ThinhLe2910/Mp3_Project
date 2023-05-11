@@ -17,8 +17,6 @@ struct AccountInfor:Decodable{
     let email_active: Bool
     let type, status: Int
     let dateCreated: String
-    let recent: [String]
-    let listrecent:[MusicInfor]?
     let __v:Int
     let avatarImage: String
 }

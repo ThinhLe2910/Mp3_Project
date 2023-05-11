@@ -13,9 +13,10 @@ class ListMusicViewController: UIViewController {
     var arrMusic: Array<MusicInfor> = []
     @IBOutlet weak var tableListMusicView: UITableView!
     var musicApi:MusicApiService
-    
-    init(musicApi: MusicApiService) {
+    var recentApi:RecentApiService
+    init(musicApi: MusicApiService,recentApi:RecentApiService) {
         self.musicApi = musicApi
+        self.recentApi = recentApi
         super.init(nibName: "ListMusicViewController", bundle: nil)
     }
     
@@ -76,7 +77,7 @@ func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     playMusic.music = arrMusic[indexPath.row]
     if let token = UserDefaults.standard.string(forKey: "token") {
         let id = arrMusic[indexPath.row]._id
-        musicApi.addRecent(token: token, id: id, completionHandler: { [weak self] value in
+        recentApi.addRecent(token: token, idMusic: id, completionHandler: { [weak self] value in
             guard let self = self else{
                 return
             }
@@ -94,7 +95,7 @@ func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     guard tableListMusicView.indexPathForRow(at: sender.convert(sender.frame.origin, to: tableListMusicView)) != nil else {
         return
     }
-    let musicOfAccVC = MusicOfAccountViewController(musicAPI: musicApi)
+    let musicOfAccVC = MusicOfAccountViewController(musicAPI: musicApi, recentAPI:recentApi)
     musicOfAccVC.idAccount = arrMusic[sender.tag].idAccount
     self.navigationController?.pushViewController(musicOfAccVC, animated: false)
 }

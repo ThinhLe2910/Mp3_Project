@@ -38,7 +38,7 @@ class DownloadViewController: UIViewController {
     }
     func getListUrl(){
         let documentsDirectoryURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        var mp3Path = documentsDirectoryURL.appendingPathComponent("MP3_Project", isDirectory: true)
+        let mp3Path = documentsDirectoryURL.appendingPathComponent("MP3_Project", isDirectory: true)
 
         do {
             let fileURLs = try FileManager.default.contentsOfDirectory(at: mp3Path, includingPropertiesForKeys: nil)

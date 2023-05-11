@@ -18,7 +18,6 @@ protocol MusicApiService{
     func updateMusic(token:String,image:String,id:String,idCategory:String,nameSong:String,nameSinger:String,music:String,completionHandler: @escaping((Result)->Void))
     func findListMusicByAccountId(id:String,completionHandler:@escaping (Music_Result)->Void)
     func uploadMusic(urls:[URL],completionHanlder: @escaping((Result)->Void))
-    func addRecent(token:String,id:String,completionHandler: @escaping(Result)->Void)
     func uploadMusicImage(url:URL,completionHandler: @escaping(Result)->Void)
 }
 
@@ -161,23 +160,6 @@ class MusicApi : MusicApiService{
                 case .failure(let error):
                     print(error)
                 }
-            }
-        }
-    }
-    func addRecent(token:String,id:String,completionHandler: @escaping(Result)->Void){
-        let parameters: Parameters=[
-            "token":token,
-            "_id":id
-        ]
-        AF.request("http://localhost:3000/account/recent",method: .post,parameters: parameters).response{
-            response in
-            guard let data = response.data else { return }
-            do {
-                let decoder = JSONDecoder()
-                let dataInfo = try decoder.decode(Result.self, from: data)
-                completionHandler(dataInfo)
-            } catch let error {
-                print(error)
             }
         }
     }

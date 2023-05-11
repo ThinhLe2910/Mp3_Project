@@ -14,8 +14,10 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var txtUsername: UITextField!
     
     var accountAPI:AccountAPIService
-    init(accountAPI: AccountAPIService) {
+    var recentAPI: RecentApiService
+    init(accountAPI: AccountAPIService,recentAPI: RecentApiService) {
         self.accountAPI = accountAPI
+        self.recentAPI = recentAPI
         super.init(nibName: "LoginViewController", bundle: nil)
     }
     
@@ -66,7 +68,7 @@ class LoginViewController: UIViewController {
             DispatchQueue.main.async {
                 if value.result == 1{
                     UserDefaults.standard.set(value.data, forKey: "token")
-                    self.navigationController?.pushViewController(DashboardViewController(accountAPI: self.accountAPI), animated: true)
+                    self.navigationController?.pushViewController(DashboardViewController(accountAPI: self.accountAPI, recentApi: self.recentAPI), animated: true)
                 }else{
                     let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
                     let ok = UIAlertAction(title: "OK", style: .default)

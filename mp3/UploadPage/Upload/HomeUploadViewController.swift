@@ -243,7 +243,6 @@ extension HomeUploadViewController:UINavigationControllerDelegate,UIImagePickerC
                 DispatchQueue.main.async {
                     if value.result == 1{
                         self.newImageMusic = value.data
-                        print(self.newImageMusic)
                     }
                 }
             })

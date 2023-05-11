@@ -22,12 +22,13 @@ class HomeViewController: UIViewController {
     var object: DATA?
     var arrayCategory : Array<CategoryInfor> = []
     var arrMusic: Array<MusicInfor> = []
-    
+    var recentAPI:RecentApiService
     var categoryAPI:CategoryApiService
     let musicAPI:MusicApiService
-    init(musicApi: MusicApiService,categoryAPI: CategoryApiService) {
+    init(musicApi: MusicApiService,categoryAPI: CategoryApiService,recentAPI:RecentApiService) {
         self.categoryAPI = categoryAPI
         self.musicAPI = musicApi
+        self.recentAPI = recentAPI
         super.init(nibName: "HomeViewController", bundle: nil)
     }
     required init?(coder: NSCoder) {
@@ -38,7 +39,6 @@ class HomeViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableview.delegate = self
         tableview.dataSource = self
         tableview.refreshControl = refreshControl
@@ -129,7 +129,7 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
                 guard let self = self else{
                     return
                 }
-                let listmusicVC = ListMusicViewController(musicApi: self.musicAPI)
+                let listmusicVC = ListMusicViewController(musicApi: self.musicAPI, recentApi: self.recentAPI)
                 listmusicVC.id = id
                 self.navigationController?.pushViewController(listmusicVC, animated: true)
             }
@@ -175,7 +175,7 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
             playMusic.music = currentDataSource[indexPath.row]
             if let token = UserDefaults.standard.string(forKey: "token") {
                 let id = currentDataSource[indexPath.row]._id
-                musicAPI.addRecent(token: token, id: id, completionHandler: { [weak self] value in
+                recentAPI.addRecent(token: token, idMusic: id, completionHandler: { [weak self] value in
                     guard let self = self else{
                         return
                     }
@@ -195,7 +195,7 @@ extension HomeViewController:UITableViewDelegate, UITableViewDataSource{
         guard tableview.indexPathForRow(at: sender.convert(sender.frame.origin, to: tableview)) != nil else {
             return
         }
-        let musicOfAccVC = MusicOfAccountViewController(musicAPI: musicAPI)
+        let musicOfAccVC = MusicOfAccountViewController(musicAPI: musicAPI, recentAPI: recentAPI)
         musicOfAccVC.idAccount = currentDataSource[sender.tag].idAccount
         self.navigationController?.pushViewController(musicOfAccVC, animated: false)
     }
