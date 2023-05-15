@@ -9,9 +9,6 @@ import UIKit
 
 class RegisterViewController: UIViewController {
     
-    
-    var handlerLogin: ((_ message: String) -> Void)?
-    
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtConfirmPassword: UITextField!
     @IBOutlet weak var txtPassword: UITextField!
@@ -47,15 +44,15 @@ class RegisterViewController: UIViewController {
                 return
             }
             DispatchQueue.main.async {
-                if value.result == 1{
-                    self.handlerLogin?(value.message)
-                    self.navigationController?.popViewController(animated: true)
-                }else{
-                    let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .default)
-                    aleart.addAction(ok)
-                    self.present(aleart,animated: true)
-                }
+                let aleart = UIAlertController(title: "Notification", message: value.message, preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default,handler: { [weak self]  action in
+                    if value.result == 1 {
+                        self?.navigationController?.popViewController(animated: true)
+                    }
+                })
+                aleart.addAction(ok)
+                self.present(aleart,animated: true)
+                
             }
         })
     }

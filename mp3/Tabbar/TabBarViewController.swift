@@ -29,7 +29,6 @@ class TabBarViewController: UITabBarController {
           
           let dashboard = DashboardViewController(accountAPI: accountApiService, recentApi: recentApiService)
           dashboard.tabBarItem = UITabBarItem(title: "Account", image: UIImage(named: "account-tab"), tag: 1)
-          
           if let _ = UserDefaults.standard.string(forKey: "token") {
               navviewDashboard = UINavigationController(rootViewController: dashboard)
           } else {

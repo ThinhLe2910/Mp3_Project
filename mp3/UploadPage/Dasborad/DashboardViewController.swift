@@ -42,6 +42,7 @@ class DashboardViewController: UIViewController {
         avatarView.layer.borderWidth = 2
         avatarView.layer.borderColor = UIColor.lightGray.cgColor
         getMusic()
+        getAccount()
         list = [
             Section(
                 open:false,
@@ -85,6 +86,7 @@ class DashboardViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         getMusic()
+        getAccount()
     }
 }
 extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
@@ -113,7 +115,7 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
         switch indexPath.section {
         case 0 :
             let cell = tableView.dequeueReusableCell(withIdentifier: ListMusicTableViewCell.description(), for: indexPath) as! ListMusicTableViewCell
-            cell.buttonPostBy.setTitle("Post By : " + listRecent!.data[indexPath.row].Account[0].name,for: .normal)
+            cell.buttonPostBy.isHidden = true
             cell.labelNameSinger.text = listRecent!.data[indexPath.row].listrecent![0].nameSinger
             cell.labelNameMusic.lineBreakMode = NSLineBreakMode.byWordWrapping
             cell.labelNameMusic.numberOfLines = 0
@@ -268,14 +270,22 @@ extension DashboardViewController:UITableViewDelegate,UITableViewDataSource{
             }
             if(value.result == 1){
                 self.listRecent?.data = value.data
-                        DispatchQueue.main.async {
-                            self.avatarView.sd_setImage(with: URL(string: value.data[0].Account[0].avatarImage), placeholderImage: UIImage(named: "placeholder.png"))
-                            self.tableView.reloadData()
-                        }
+                self.tableView.reloadData()
                 }
         })
     }
-    
+    func getAccount(){
+        accountAPI.getAccount(token: token) { [weak self] value in
+            guard let self = self else{
+                return
+            }
+            if(value.result == 1){
+                DispatchQueue.main.async {
+                    self.avatarView.sd_setImage(with: URL(string: value.data.avatarImage), placeholderImage: UIImage(named: "placeholder.png"))
+                    }
+                }
+        }
+    }
     @objc func Logout(sender: UIButton){
         guard tableView.indexPathForRow(at: sender.convert(sender.frame.origin, to: tableView)) != nil else {
             return

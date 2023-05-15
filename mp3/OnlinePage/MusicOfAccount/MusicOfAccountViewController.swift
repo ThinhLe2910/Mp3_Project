@@ -82,11 +82,11 @@ extension MusicOfAccountViewController:UITableViewDelegate,UITableViewDataSource
                     return
                 }
                 DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(playMusic, animated: true)
+                    self.present(playMusic, animated: true)
                 }
             })
         }else{
-            self.navigationController?.pushViewController(playMusic, animated: true)
+            self.present(playMusic, animated: true)
         }
     }
     

@@ -37,21 +37,6 @@ class LoginViewController: UIViewController {
         // Do any additional setup after loading the view.
         
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        let register = RegisterViewController(accountAPI: accountAPI)
-        register.handlerLogin = { [weak self] message in
-            guard let self = self else{
-                return
-            }
-            DispatchQueue.main.async {
-                let aleart = UIAlertController(title: "Notification", message: message, preferredStyle: .alert)
-                let ok = UIAlertAction(title: "OK", style: .default)
-                aleart.addAction(ok)
-                self.present(aleart,animated: true)
-            }
-        }
-    }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         lbMessageFromRegister.text=""

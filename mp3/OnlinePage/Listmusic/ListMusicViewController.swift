@@ -83,12 +83,12 @@ func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             }
             DispatchQueue.main.async {
                 if value.result == 1{
-                    self.navigationController?.pushViewController(playMusic, animated: true)
+                    self.present(playMusic, animated: true)
                 }
             }
         })
     }else{
-        self.navigationController?.pushViewController(playMusic, animated: true)
+        self.present(playMusic, animated: true)
     }
 }
 @objc func btnPostBy(sender: UIButton){

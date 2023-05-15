@@ -13,8 +13,6 @@ struct Recent_Result:Decodable{
 }
 struct DataRecent:Decodable{
     let _id: String
-    let idAccount:String
     let recent:String
-    let Account:[AccountInfor]
     let listrecent:[MusicInfor]?
 }
